@@ -71,4 +71,5 @@ Quy ước :
 			+ 31 : Lỗi Định dạng không đúng (Format Error):Dữ liệu nhập không tuân theo định dạng yêu cầu, ví dụ: định dạng ngày tháng không đúng.
 			+ 32 : Lỗi Quá dài hoặc Quá ngắn (Length Error)
 			+ 33 : Lỗi Xác nhận mật khẩu không khớp (Password Confirmation Error)
-		
+		- 4x : Lỗi hacker
+			+ 41 : Sai khóa xác thực token

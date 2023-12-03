@@ -2,17 +2,17 @@
 using Microsoft.AspNetCore.Mvc;
 using Model;
 using Model.Interface;
-using src.Interface;
 using Bussiness;
 using Microsoft.Extensions.Configuration;
 using Bussiness.Exceptions;
 using System.Security.Principal;
+using Microsoft.IdentityModel.Tokens;
 
 namespace src.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase , ICRUD<Account>
+    public class AccountController : ControllerBase 
     {
         [HttpPost]
         [Route("create")]
@@ -23,6 +23,7 @@ namespace src.Controllers
             {
                 Bussiness<Account>.Save(obj);
                 result.StatusCode = 200;
+                result.Message = "Save Successfully !!";
             }
             catch (ArgumentNullException ex)
             {
@@ -31,7 +32,7 @@ namespace src.Controllers
             }
             catch (InvalidAccountException)
             {
-                result.StatusCode = 0001;
+                result.StatusCode = 32;
                 result.Message = "Account truyền vào không hợp lệ (Ví dụ username có độ dài phải > 2 và < 15)";
             }
             catch (Exception ex)
@@ -46,7 +47,25 @@ namespace src.Controllers
         [Route("delete")]
         public ActionResult<ResponseResult> Delete(Account obj)
         {
-            throw new NotImplementedException();
+            ResponseResult res = new ResponseResult();
+            try{
+                Bussiness<Account>.Delete(obj);
+                res.StatusCode = 200;
+                res.Message = "Delete Successfully !!";
+            }
+            // catch(ArgumentNullException ex) or (InvalidCastException ex){
+            //     res.StatusCode = 400;
+            //     res.Message = ex.Message;
+            // }
+            catch(InvalidAccountException ex){
+                res.StatusCode = 32;
+                res.Message = ex.Message;
+            }
+            catch(Exception ex){
+                res.StatusCode = 500;
+                res.Message = ex.Message;
+            }
+            return Ok(res);
         }
         [HttpGet]
         [Route("get-all")]
@@ -91,19 +110,16 @@ namespace src.Controllers
             catch (ArgumentException ex)
             {
                 result.StatusCode = 400;
-                result.Data = null;
                 result.Message = ex.Message;
             }
             catch (DataNotFoundException ex)
             {
                 result.StatusCode = 404;
-                result.Data = null;
                 result.Message = ex.Message;
             }
             catch (Exception ex)
             {
                 result.StatusCode = 500;
-                result.Data = null;
                 result.Message = ex.Message;
             }
             return Ok(result);
@@ -118,9 +134,12 @@ namespace src.Controllers
                 Bussiness<Account>.Save(obj);
                 result.StatusCode = 200;
             }
-            catch (ArgumentException ex)
-            {
-                result.StatusCode = 400;
+            // catch(ArgumentNullException ex) or (InvalidCastException ex){
+            //     result.StatusCode = 400;
+            //     result.Message = ex.Message;
+            // }
+            catch(InvalidAccountException ex){
+                result.StatusCode = 32;
                 result.Message = ex.Message;
             }
             catch (Exception ex)
@@ -163,6 +182,11 @@ namespace src.Controllers
             }catch(NotAuthenticated ex)
             {
                 result.StatusCode = 16;
+                result.Message = ex.Message;
+            }
+            catch(SecurityTokenSignatureKeyNotFoundException ex)
+            {
+                result.StatusCode = 41;
                 result.Message = ex.Message;
             }
             catch (Exception ex)
