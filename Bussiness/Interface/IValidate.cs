@@ -11,5 +11,6 @@ namespace Bussiness.Interface
     {
         bool ValidateModelData(object obj);
         bool ValidateKeyModel(IKey obj);
+        bool ExistsModel(IKey obj);
     }
 }

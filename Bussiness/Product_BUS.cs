@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Bussiness
 {
-    internal class Product_BUS : IValidate
+    internal class Product_BUS : IValidate , IProduct_BUS
     {
         public bool ValidateKeyModel(IKey obj)
         {
@@ -21,6 +21,15 @@ namespace Bussiness
         {
             Product product = obj as Product;
             throw new NotImplementedException();
+        }
+        public Product[] FindProductByWords(string word)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ExistsModel(IKey obj){
+            throw new NotImplementedException();
+
         }
     }
 }

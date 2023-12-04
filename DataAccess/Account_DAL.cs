@@ -39,7 +39,7 @@ namespace DataAccess
         {
             Account? account = obj as Account;
             if ( account == null ) { throw new InvalidCastException("dynamic obj không phải là 1 account"); }
-            DataProvider.Instance.ExecuteNonQuery($"USP_UpdateOrInsert @colum1={account.username} , @Colum2={account.password} , @Colum3={account.permissions}");
+            DataProvider.Instance.ExecuteNonQuery($"UpsertAccount @username={account.username} , @password={account.password} , @permissions={account.permissions}");
         }
     }
 }

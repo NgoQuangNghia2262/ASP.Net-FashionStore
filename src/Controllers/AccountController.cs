@@ -31,13 +31,16 @@ namespace src.Controllers
             }
             catch (InvalidAccountException)
             {
-                result.StatusCode = 0001;
+                result.StatusCode = 32;
                 result.Message = "Account truyền vào không hợp lệ (Ví dụ username có độ dài phải > 2 và < 15)";
+
             }
             catch (Exception ex)
             {
                 result.StatusCode = 500;
                 result.Message = ex.Message;
+                return BadRequest(result);
+
             }
             return Ok(result);
         }
@@ -46,7 +49,33 @@ namespace src.Controllers
         [Route("delete")]
         public ActionResult<ResponseResult> Delete(Account obj)
         {
+<<<<<<< Updated upstream
             throw new NotImplementedException();
+=======
+            ResponseResult res = new ResponseResult();
+            try{
+                Bussiness<Account>.Delete(obj);
+                res.StatusCode = 200;
+                res.Message = "Delete Successfully !!";
+            }
+            // catch(ArgumentNullException ex) or (InvalidCastException ex){
+            //     res.StatusCode = 400;
+            //     res.Message = ex.Message;
+            // }
+            catch(InvalidAccountException ex){
+                res.StatusCode = 32;
+                res.Message = ex.Message;
+                return BadRequest(res);
+
+            }
+            catch (Exception ex){
+                res.StatusCode = 500;
+                res.Message = ex.Message;
+                return BadRequest(res);
+
+            }
+            return Ok(res);
+>>>>>>> Stashed changes
         }
         [HttpGet]
         [Route("get-all")]
@@ -63,16 +92,22 @@ namespace src.Controllers
             {
                 result.StatusCode = 404;
                 result.Message = ex.Message;
+                return BadRequest(result);
+
             }
             catch (ArgumentException ex)
             {
                 result.StatusCode = 400;
                 result.Message = ex.Message;
+                return BadRequest(result);
+
             }
             catch (Exception ex)
             {
                 result.StatusCode = 500;
                 result.Message = ex.Message;
+                return BadRequest(result);
+
             }
             return Ok(result);
         }
@@ -93,18 +128,24 @@ namespace src.Controllers
                 result.StatusCode = 400;
                 result.Data = null;
                 result.Message = ex.Message;
+                return BadRequest(result);
+
             }
             catch (DataNotFoundException ex)
             {
                 result.StatusCode = 404;
                 result.Data = null;
                 result.Message = ex.Message;
+                return BadRequest(result);
+
             }
             catch (Exception ex)
             {
                 result.StatusCode = 500;
                 result.Data = null;
                 result.Message = ex.Message;
+                return BadRequest(result);
+
             }
             return Ok(result);
         }
@@ -122,11 +163,15 @@ namespace src.Controllers
             {
                 result.StatusCode = 400;
                 result.Message = ex.Message;
+                return BadRequest(result);
+
             }
             catch (Exception ex)
             {
                 result.StatusCode = 500;
                 result.Message = ex.Message;
+                return BadRequest(result);
+
             }
             return Ok(result);
         }
@@ -146,6 +191,8 @@ namespace src.Controllers
             }catch(Exception ex) {
                 result.StatusCode = 500;
                 result.Message = ex.Message;
+                return BadRequest(result);
+
             }
             return Ok(result);
         }
@@ -160,17 +207,32 @@ namespace src.Controllers
                 authen.AdminAuth(HttpContext);
                 result.StatusCode = 200;
                 result.Message = "Successfully !!";
-            }catch(NotAuthenticated ex)
+                return Ok(result);
+            }
+            catch (NotAuthenticated ex)
             {
                 result.StatusCode = 16;
                 result.Message = ex.Message;
+                return BadRequest(result);
+
             }
+<<<<<<< Updated upstream
+=======
+            catch (SecurityTokenSignatureKeyNotFoundException ex)
+            {
+                result.StatusCode = 41;
+                result.Message = ex.Message;
+                return BadRequest(result);
+
+            }
+>>>>>>> Stashed changes
             catch (Exception ex)
             {
                 result.StatusCode = 500;
                 result.Message = ex.Message;
+                return BadRequest(result);
+
             }
-            return Ok(result);
         }
         [HttpGet]
         [Route("log-out")]
@@ -188,6 +250,7 @@ namespace src.Controllers
             {
                 result.StatusCode = 500;
                 result.Message = ex.Message;
+                return BadRequest(result);
             }
             return Ok(result);
         }

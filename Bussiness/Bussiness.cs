@@ -14,7 +14,7 @@ namespace Bussiness
                 instance.BUS.ValidateModelData(obj);
                 instance.ICrud.Save(obj);
             }
-            catch (ArgumentException ex) {
+            catch (ArgumentNullException ex) {
                 throw ex;
             }
             catch (InvalidCastException ex) {
@@ -28,10 +28,12 @@ namespace Bussiness
             {
                 ControlManager.InstanceForICRUAndBUS instance = ControlManager.CreateInstanceForICRUDAndBUS(typeof(T));
                 instance.BUS.ValidateKeyModel(obj);
+                if(!instance.BUS.ExistsModel(obj)){
+                    throw new DataConstraintViolationException("Obj chưa có trong cơ sở dữ liệu , không thể xóa");
+                }
                 instance.ICrud.Delete(obj);
-
             }
-            catch (ArgumentException ex)
+            catch (ArgumentNullException ex)
             {
                 throw ex;
             }
@@ -59,8 +61,8 @@ namespace Bussiness
             try
             {
                 ControlManager.InstanceForICRUAndBUS instance = ControlManager.CreateInstanceForICRUDAndBUS(typeof(T));
-                DataTable result = instance.ICrud.FindOne(obj);
                 instance.BUS.ValidateKeyModel(obj);
+                DataTable result = instance.ICrud.FindOne(obj);
                 if (result.Rows.Count == 0) { throw new DataNotFoundException("No results found."); }
                 return Middleware.Convert<T>.DataRowToModel(result.Rows[0]);
             }

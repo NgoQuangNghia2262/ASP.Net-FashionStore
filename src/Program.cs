@@ -25,7 +25,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         };
         options.ExpireTimeSpan = TimeSpan.FromDays(1);
     });
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -53,3 +54,13 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+//namespace src
+//{
+//    public class Program
+//    {
+//        public static void Main(string[] args)
+//        {
+
+//        }
+//    }
+//}

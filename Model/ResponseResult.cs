@@ -8,7 +8,7 @@ namespace Model
 {
     public class ResponseResult
     {
-        private readonly int[] StatusCodeValid = { 200, 201, 202, 300, 400, 404, 500 , 0001 , 10,11,12,13,14,15,16,20,21,22,23,30,31,32,33};
+        private readonly int[] StatusCodeValid = { 200, 201, 202, 300, 400, 404, 500 , 0001 , 10,11,12,13,14,15,16,20,21,22,23,30,31,32,33,40,41};
         private int _statusCode;
         private string? _message;
 

@@ -12,7 +12,7 @@ namespace Bussiness.Middleware
 {
     internal class ActionJWT
     {
-        private readonly static string JWT_SECRET = "NghiaxNghiax";
+        private readonly static string JWT_SECRET = "NghiaxNghiaxx";
         private readonly static RSAParameters RSAParameters = new RSAParameters();
         public static string createJWT(Account obj)
         {
@@ -41,7 +41,23 @@ namespace Bussiness.Middleware
         {
             if (jwtToken == null) { throw new NotAuthenticated("User is not authenticated"); }
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-            JwtSecurityToken? jsonToken = tokenHandler.ReadToken(jwtToken) as JwtSecurityToken;
+            byte[] hash;
+            using (var algorithm = SHA256.Create())
+            {
+                hash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(JWT_SECRET));
+            }
+            SymmetricSecurityKey key = new SymmetricSecurityKey(hash);
+            TokenValidationParameters validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = key,
+                ValidateIssuer = false, 
+                ValidateAudience = false, 
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            ClaimsPrincipal jsonToken = tokenHandler.ValidateToken(jwtToken, validationParameters, out _);
             string username = jsonToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
             string? role = jsonToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
             Account account = new Account

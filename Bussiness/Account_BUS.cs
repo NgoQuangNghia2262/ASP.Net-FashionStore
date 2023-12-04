@@ -17,12 +17,7 @@ namespace Bussiness
     {
         private readonly static string[] categorysUser = { "admin", "customer", "employe" };
         private IAccount_DAL account_DAL = new Account_DAL();
-        public Account_BUS() { }
-        public Account_BUS(IAccount_DAL account_DAL)
-        {
-            this.account_DAL = account_DAL;
-        }
-
+        private DataAccess.Interface.ICRUD ICrud = new Account_DAL();
         public bool ValidateModelData(object obj)
         {
             Account? account = obj as Account;
@@ -42,7 +37,10 @@ namespace Bussiness
             if (!isUsername) { throw new InvalidAccountException("Username không hợp lệ."); }
             return true;
         }
-
+        public bool ExistsModel(IKey obj){
+            DataTable dt = ICrud.FindOne(obj);
+            return dt.Rows.Count > 0;
+        }
         public void Login(HttpContext context, Account account)
         {
             try
@@ -61,7 +59,7 @@ namespace Bussiness
         {
             string token = ActionCookie.GetCookieName(context , "AccessToken");
             Account account = ActionJWT.VerifyJwtToken(token);
-            return token != null;
+            return account.permissions == "admin";
         }
 
         public void Logout(HttpResponse res)
