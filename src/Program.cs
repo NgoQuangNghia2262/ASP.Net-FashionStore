@@ -60,7 +60,8 @@ app.Run();
 //    {
 //        public static void Main(string[] args)
 //        {
-
+//            string passwordHash = BCrypt.Net.BCrypt.HashPassword("Pa$$w0rd");
+//            Console.WriteLine(passwordHash);
 //        }
 //    }
 //}

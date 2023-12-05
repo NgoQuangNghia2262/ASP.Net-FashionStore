@@ -13,7 +13,7 @@ using System.Security.Principal;
 
 namespace Bussiness
 {
-    public class Account_BUS : IValidate , IAuthentication
+    public class Account_BUS : IValidate, IAuthentication, IAccount_BUS
     {
         private readonly static string[] categorysUser = { "admin", "customer", "employe" };
         private IAccount_DAL account_DAL = new Account_DAL();
@@ -26,7 +26,6 @@ namespace Bussiness
             bool isPassword = account?.password?.Length > 6;
             bool isCategory = categorysUser.Contains(account?.permissions?.ToLower());
             if (!isUsername || !isPassword || !isCategory) { throw new InvalidAccountException("Account không hợp lệ."); }
-           
             return true;
         }
         public bool ValidateKeyModel(IKey obj)
@@ -37,27 +36,21 @@ namespace Bussiness
             if (!isUsername) { throw new InvalidAccountException("Username không hợp lệ."); }
             return true;
         }
-        public bool ExistsModel(IKey obj){
+        public bool ExistsModel(IKey obj)
+        {
             DataTable dt = ICrud.FindOne(obj);
             return dt.Rows.Count > 0;
         }
         public void Login(HttpContext context, Account account)
         {
-            try
-            {
-                account_DAL.Login(account);
-                string nameCookie = "AccessToken";
-                string value = ActionJWT.createJWT(account);
-                ActionCookie.AddCookie(context, nameCookie, value);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            account_DAL.Login(account);
+            string nameCookie = "AccessToken";
+            string value = ActionJWT.createJWT(account);
+            ActionCookie.AddCookie(context, nameCookie, value);
         }
         public bool AdminAuth(HttpContext context)
         {
-            string token = ActionCookie.GetCookieName(context , "AccessToken");
+            string token = ActionCookie.GetCookieName(context, "AccessToken");
             Account account = ActionJWT.VerifyJwtToken(token);
             return account.permissions == "admin";
         }
@@ -65,6 +58,31 @@ namespace Bussiness
         public void Logout(HttpResponse res)
         {
             ActionCookie.DeleteCookie(res, "AccessToken");
+        }
+        public void Regist(Account account)
+        {
+            DataTable dt = ICrud.FindOne(account);
+            if (dt.Rows.Count > 0)
+            {
+                throw new DuplicateDataException("Account đã tồn tại");
+            }
+            ValidateKeyModel(account);
+            account.password = BCrypt.Net.BCrypt.HashPassword(account.password);
+            ICrud.Save(account);
+
+        }
+        public void ChangePassword(Account account, string? newPass)
+        {
+            DataTable dt = ICrud.FindOne(account);
+            if (dt.Rows.Count == 0)
+            {
+                throw new DataNotFoundException("not found");
+            }
+            bool verified = BCrypt.Net.BCrypt.Verify(account.password, dt?.Rows[0]["password"]?.ToString()?.Trim());
+            if (!verified) { throw new InvalidCredentialsException("Wrong Pass"); }
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(newPass);
+            account.password = passwordHash;
+            ICrud.Save(account);
         }
     }
 }

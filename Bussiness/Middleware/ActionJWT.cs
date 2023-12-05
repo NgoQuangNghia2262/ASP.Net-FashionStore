@@ -13,7 +13,6 @@ namespace Bussiness.Middleware
     internal class ActionJWT
     {
         private readonly static string JWT_SECRET = "NghiaxNghiaxx";
-        private readonly static RSAParameters RSAParameters = new RSAParameters();
         public static string createJWT(Account obj)
         {
             if (obj == null) { throw new ArgumentNullException("Tham số Account = null"); }
@@ -44,15 +43,15 @@ namespace Bussiness.Middleware
             byte[] hash;
             using (var algorithm = SHA256.Create())
             {
-                hash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(JWT_SECRET));
+                hash = algorithm.ComputeHash(Encoding.UTF8.GetBytes("s"));
             }
             SymmetricSecurityKey key = new SymmetricSecurityKey(hash);
             TokenValidationParameters validationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = key,
-                ValidateIssuer = false, 
-                ValidateAudience = false, 
+                ValidateIssuer = false,
+                ValidateAudience = false,
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero
             };

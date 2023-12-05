@@ -7,12 +7,15 @@ using Bussiness;
 using Microsoft.Extensions.Configuration;
 using Bussiness.Exceptions;
 using System.Security.Principal;
+using Microsoft.IdentityModel.Tokens;
+using System.Text.Json;
+using Bussiness.Interface;
 
 namespace src.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase , ICRUD<Account>
+    public class AccountController : ControllerBase, ICRUD<Account>
     {
         [HttpPost]
         [Route("create")]
@@ -49,33 +52,32 @@ namespace src.Controllers
         [Route("delete")]
         public ActionResult<ResponseResult> Delete(Account obj)
         {
-<<<<<<< Updated upstream
-            throw new NotImplementedException();
-=======
             ResponseResult res = new ResponseResult();
-            try{
+            try
+            {
                 Bussiness<Account>.Delete(obj);
                 res.StatusCode = 200;
                 res.Message = "Delete Successfully !!";
             }
-            // catch(ArgumentNullException ex) or (InvalidCastException ex){
+            // catch (ArgumentNullException ex) (InvalidCastException ex){
             //     res.StatusCode = 400;
             //     res.Message = ex.Message;
             // }
-            catch(InvalidAccountException ex){
+            catch (InvalidAccountException ex)
+            {
                 res.StatusCode = 32;
                 res.Message = ex.Message;
                 return BadRequest(res);
 
             }
-            catch (Exception ex){
+            catch (Exception ex)
+            {
                 res.StatusCode = 500;
                 res.Message = ex.Message;
                 return BadRequest(res);
 
             }
             return Ok(res);
->>>>>>> Stashed changes
         }
         [HttpGet]
         [Route("get-all")]
@@ -126,7 +128,6 @@ namespace src.Controllers
             catch (ArgumentException ex)
             {
                 result.StatusCode = 400;
-                result.Data = null;
                 result.Message = ex.Message;
                 return BadRequest(result);
 
@@ -134,7 +135,6 @@ namespace src.Controllers
             catch (DataNotFoundException ex)
             {
                 result.StatusCode = 404;
-                result.Data = null;
                 result.Message = ex.Message;
                 return BadRequest(result);
 
@@ -142,7 +142,6 @@ namespace src.Controllers
             catch (Exception ex)
             {
                 result.StatusCode = 500;
-                result.Data = null;
                 result.Message = ex.Message;
                 return BadRequest(result);
 
@@ -183,12 +182,14 @@ namespace src.Controllers
             ResponseResult result = new ResponseResult();
             try
             {
-               
+
                 Bussiness.Interface.IAuthentication authen = new Account_BUS();
-                authen.Login(HttpContext , account);
+                authen.Login(HttpContext, account);
                 result.StatusCode = 200;
                 result.Message = "Successfully !!";
-            }catch(Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 result.StatusCode = 500;
                 result.Message = ex.Message;
                 return BadRequest(result);
@@ -216,8 +217,6 @@ namespace src.Controllers
                 return BadRequest(result);
 
             }
-<<<<<<< Updated upstream
-=======
             catch (SecurityTokenSignatureKeyNotFoundException ex)
             {
                 result.StatusCode = 41;
@@ -225,7 +224,6 @@ namespace src.Controllers
                 return BadRequest(result);
 
             }
->>>>>>> Stashed changes
             catch (Exception ex)
             {
                 result.StatusCode = 500;
@@ -255,5 +253,96 @@ namespace src.Controllers
             return Ok(result);
         }
 
+        [HttpPost]
+        [Route("change-password")]
+        public ActionResult<ResponseResult> ChangePasswrod(object obj)
+        {
+            ResponseResult res = new ResponseResult();
+            try
+            {
+                JsonDocument jsonDocument = JsonDocument.Parse(obj.ToString());
+                JsonElement root = jsonDocument.RootElement;
+                string? username = "";
+                string? pass = "";
+                string? per = "";
+                string? newpass = "";
+                if (root.TryGetProperty("username", out JsonElement nameElement))
+                {
+                    username = nameElement.GetString();
+                }
+                if (root.TryGetProperty("password", out JsonElement passElement))
+                {
+                    pass = passElement.GetString();
+                }
+                if (root.TryGetProperty("permissions", out JsonElement perElement))
+                {
+                    per = perElement.GetString();
+                }
+                if (root.TryGetProperty("newpass", out JsonElement newpassElement))
+                {
+                    newpass = newpassElement.GetString();
+                }
+                Account ac = new Account(username, pass, per);
+                Bussiness.Interface.IAccount_BUS bus = new Account_BUS();
+                bus.ChangePassword(ac, newpass);
+                res.StatusCode = 200;
+                res.Message = "Change Password Successfully !!";
+            }
+            catch (DataNotFoundException ex)
+            {
+                res.StatusCode = 404;
+                res.Message = ex.Message;
+                return BadRequest(res);
+            }
+            catch (InvalidCredentialsException ex)
+            {
+                res.StatusCode = 15;
+                res.Message = ex.Message;
+                return BadRequest(res);
+            }
+            catch (Exception ex)
+            {
+                res.StatusCode = 500;
+                res.Message = ex.Message;
+                return BadRequest(res);
+            }
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Route("regist")]
+        public ActionResult<ResponseResult> Regist(Account account)
+        {
+            ResponseResult result = new ResponseResult();
+            try
+            {
+                IAccount_BUS bus = new Account_BUS();
+                bus.Regist(account);
+                result.StatusCode = 200;
+                result.Message = "Successfully !!!";
+            }
+            catch (ArgumentNullException ex)
+            {
+                result.StatusCode = 400;
+                result.Message = ex.Message;
+            }
+            catch (InvalidAccountException)
+            {
+                result.StatusCode = 32;
+                result.Message = "Account truyền vào không hợp lệ (Ví dụ username có độ dài phải > 2 và < 15)";
+            }
+            catch (DuplicateDataException ex)
+            {
+                result.StatusCode = 21;
+                result.Message = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                result.StatusCode = 500;
+                result.Message = ex.Message;
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
     }
 }

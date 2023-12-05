@@ -1,12 +1,17 @@
 using Microsoft.AspNetCore.Hosting;
-public class StartUp
+namespace src
 {
-    //public void ConfigureServices(IServiceCollection service)
-    //{
+    public class StartUp
+    {
+        public void ConfigureServices(IServiceCollection service)
+        {
 
-    //}
-    //public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    //{
-    //    app.Run();
-    //}
+        }
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            app.Run(async (HttpContext context) =>
+            {
+            });
+        }
+    }
 }

@@ -16,7 +16,6 @@ namespace DataAccess
         {
             throw new NotImplementedException();
         }
-
         public DataTable FindAll()
         {
             throw new NotImplementedException();
@@ -26,8 +25,6 @@ namespace DataAccess
         {
             throw new NotImplementedException();
         }
-
-
         public void Save(dynamic obj)
         {
             throw new NotImplementedException();

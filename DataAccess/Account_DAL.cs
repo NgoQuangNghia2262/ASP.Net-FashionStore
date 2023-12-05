@@ -32,14 +32,15 @@ namespace DataAccess
 
         public void Login(Account account)
         {
+
             return;
         }
-
+      
         public void Save(dynamic obj)
         {
             Account? account = obj as Account;
             if ( account == null ) { throw new InvalidCastException("dynamic obj không phải là 1 account"); }
-            DataProvider.Instance.ExecuteNonQuery($"UpsertAccount @username={account.username} , @password={account.password} , @permissions={account.permissions}");
+            DataProvider.Instance.ExecuteNonQuery($"UpsertAccount @username='{account.username}' , @password='{account.password}' , @permissions='{account.permissions}'");
         }
     }
 }
