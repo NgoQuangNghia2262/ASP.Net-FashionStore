@@ -1,23 +1,25 @@
 ﻿using Model.Interface;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 
 namespace Model
 {
-   
+
     public class Account : IKeyAccount
     {
+        [Required]
         private string _username;
         private string? _password;
         private string? _permissions;
-        
 
-      
-        public string username 
+
+        [Required]
+        public string username
         {
             get => _username;
             set
             {
-                if(value == null) { throw new ArgumentNullException(nameof(value)); }
+                if (value == null) { throw new ArgumentNullException(nameof(value)); }
                 _username = value.Trim();
             }
         }
@@ -25,12 +27,12 @@ namespace Model
         public string? permissions { get => _permissions; set => _permissions = value?.Trim(); }
         public Account()
         {
-            username = "";
+            _username = "";
         }
 
         public Account(string username, string? password, string? permissions)
         {
-            this.username = username;
+            this._username = username;
             this.password = password;
             this.permissions = permissions;
         }

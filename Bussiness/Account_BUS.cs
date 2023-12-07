@@ -24,8 +24,8 @@ namespace Bussiness
             if (account == null) { throw new ArgumentNullException("Tham số null"); }
             bool isUsername = account.username.Length > 2 && account.username.Length < 15;
             bool isPassword = account?.password?.Length > 6;
-            bool isCategory = categorysUser.Contains(account?.permissions?.ToLower());
-            if (!isUsername || !isPassword || !isCategory) { throw new InvalidAccountException("Account không hợp lệ."); }
+            bool isCategory = categorysUser.Contains(account?.permissions?.ToLower()) ? true : throw new Exception("Quyền của accoun tkhoong hợp lệ");
+            if (!isUsername || !isPassword) { throw new LengthPropertyException("Account không hợp lệ."); }
             return true;
         }
         public bool ValidateKeyModel(IKey obj)
@@ -33,7 +33,7 @@ namespace Bussiness
             IKeyAccount? keyAccount = obj as IKeyAccount;
             if (keyAccount == null) { throw new ArgumentNullException("Tham số null"); }
             bool isUsername = keyAccount.username.Length > 2 && keyAccount.username.Length < 15;
-            if (!isUsername) { throw new InvalidAccountException("Username không hợp lệ."); }
+            if (!isUsername) { throw new LengthPropertyException("Username không hợp lệ."); }
             return true;
         }
         public bool ExistsModel(IKey obj)

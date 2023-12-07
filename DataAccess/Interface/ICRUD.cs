@@ -21,7 +21,7 @@ namespace DataAccess.Interface
         // Type parameters:
         //     Đối tượng trong lớp DTO
         //    
-        DataTable FindAll();
+        DataTable FindAll(int PageSize, int PageNumber);
         DataTable FindOne(IKey name);
 
         //

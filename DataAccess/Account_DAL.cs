@@ -10,7 +10,7 @@ using Model;
 
 namespace DataAccess
 {
-    public class Account_DAL : ICRUD , IAccount_DAL
+    public class Account_DAL : ICRUD, IAccount_DAL
     {
         public void Delete(IKey obj)
         {
@@ -19,9 +19,9 @@ namespace DataAccess
             DataProvider.Instance.ExecuteNonQuery($"delete Account where Username = '{account?.username}'");
         }
 
-        public DataTable FindAll()
+        public DataTable FindAll(int PageSize, int PageNumber)
         {
-            return DataProvider.Instance.ExecuteQuery("select * from Account");
+            return DataProvider.Instance.ExecuteQuery($"Exec [GetPagedAccounts] @PageSize = {PageSize} , @PageNumber = {PageNumber}");
         }
         public DataTable FindOne(IKey obj)
         {
@@ -35,11 +35,11 @@ namespace DataAccess
 
             return;
         }
-      
+
         public void Save(dynamic obj)
         {
             Account? account = obj as Account;
-            if ( account == null ) { throw new InvalidCastException("dynamic obj không phải là 1 account"); }
+            if (account == null) { throw new InvalidCastException("dynamic obj không phải là 1 account"); }
             DataProvider.Instance.ExecuteNonQuery($"UpsertAccount @username='{account.username}' , @password='{account.password}' , @permissions='{account.permissions}'");
         }
     }

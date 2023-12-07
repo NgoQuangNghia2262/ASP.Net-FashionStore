@@ -17,6 +17,7 @@ namespace Bussiness.Middleware
             {
                 // Lấy ra property của đối tượng T dựa vào các columName (Tên của các trường trong DB)
                 PropertyInfo? prop = result?.GetType().GetProperty(column.ColumnName);
+                if (prop == null) { continue; }
                 object value = row[column.ColumnName];
                 // Lấy được trường dữ liệu thì ta set giá trị cho trường đó của T dựa vào dữ liệu từ Datarow
                 prop?.SetValue(result, value, null);

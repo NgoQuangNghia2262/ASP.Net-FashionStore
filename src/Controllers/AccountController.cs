@@ -13,7 +13,7 @@ using Bussiness.Interface;
 
 namespace src.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/account")]
     [ApiController]
     public class AccountController : ControllerBase, ICRUD<Account>
     {
@@ -27,16 +27,22 @@ namespace src.Controllers
                 Bussiness<Account>.Save(obj);
                 result.StatusCode = 200;
             }
+            catch (DuplicateDataException ex)
+            {
+                result.StatusCode = 21;
+                result.Message = ex.Message;
+            }
             catch (ArgumentNullException ex)
             {
                 result.StatusCode = 400;
                 result.Message = ex.Message;
+                return BadRequest(result);
             }
-            catch (InvalidAccountException)
+            catch (LengthPropertyException ex)
             {
                 result.StatusCode = 32;
-                result.Message = "Account truyền vào không hợp lệ (Ví dụ username có độ dài phải > 2 và < 15)";
-
+                result.Message = ex.Message;
+                return BadRequest(result);
             }
             catch (Exception ex)
             {
@@ -46,6 +52,7 @@ namespace src.Controllers
 
             }
             return Ok(result);
+
         }
 
         [HttpDelete]
@@ -63,12 +70,11 @@ namespace src.Controllers
             //     res.StatusCode = 400;
             //     res.Message = ex.Message;
             // }
-            catch (InvalidAccountException ex)
+            catch (LengthPropertyException ex)
             {
                 res.StatusCode = 32;
                 res.Message = ex.Message;
                 return BadRequest(res);
-
             }
             catch (Exception ex)
             {
@@ -81,21 +87,22 @@ namespace src.Controllers
         }
         [HttpGet]
         [Route("get-all")]
-        public ActionResult<ResponseResult<Account[]>> FindAll()
+        public ActionResult<ResponseResult<Account[]>> FindAll(int PageSize, int PageNumber)
         {
             ResponseResult<Account[]> result = new ResponseResult<Account[]>();
             try
             {
-                Account[] accounts = Bussiness<Account>.FindAll();
+                int TotalRows = 0;
+                Account[] accounts = Bussiness<Account>.FindAll(PageSize, PageNumber, out TotalRows);
                 result.StatusCode = 200;
                 result.Data = accounts;
+                result.TotalRows = TotalRows;
             }
             catch (DataNotFoundException ex)
             {
                 result.StatusCode = 404;
                 result.Message = ex.Message;
                 return BadRequest(result);
-
             }
             catch (ArgumentException ex)
             {
@@ -165,6 +172,13 @@ namespace src.Controllers
                 return BadRequest(result);
 
             }
+            catch (LengthPropertyException ex)
+            {
+                result.StatusCode = 32;
+                result.Message = ex.Message;
+                return BadRequest(result);
+
+            }
             catch (Exception ex)
             {
                 result.StatusCode = 500;
@@ -187,6 +201,13 @@ namespace src.Controllers
                 authen.Login(HttpContext, account);
                 result.StatusCode = 200;
                 result.Message = "Successfully !!";
+            }
+            catch (LengthPropertyException ex)
+            {
+                result.StatusCode = 32;
+                result.Message = ex.Message;
+                return BadRequest(result);
+
             }
             catch (Exception ex)
             {
@@ -260,7 +281,7 @@ namespace src.Controllers
             ResponseResult res = new ResponseResult();
             try
             {
-                JsonDocument jsonDocument = JsonDocument.Parse(obj.ToString());
+                JsonDocument jsonDocument = JsonDocument.Parse(obj.ToString() ?? "");
                 JsonElement root = jsonDocument.RootElement;
                 string? username = "";
                 string? pass = "";
@@ -282,7 +303,7 @@ namespace src.Controllers
                 {
                     newpass = newpassElement.GetString();
                 }
-                Account ac = new Account(username, pass, per);
+                Account ac = new Account(username ?? "", pass, per);
                 Bussiness.Interface.IAccount_BUS bus = new Account_BUS();
                 bus.ChangePassword(ac, newpass);
                 res.StatusCode = 200;
@@ -299,6 +320,13 @@ namespace src.Controllers
                 res.StatusCode = 15;
                 res.Message = ex.Message;
                 return BadRequest(res);
+            }
+            catch (LengthPropertyException ex)
+            {
+                res.StatusCode = 32;
+                res.Message = ex.Message;
+                return BadRequest(res);
+
             }
             catch (Exception ex)
             {
@@ -325,16 +353,21 @@ namespace src.Controllers
             {
                 result.StatusCode = 400;
                 result.Message = ex.Message;
+                return BadRequest(result);
+
             }
-            catch (InvalidAccountException)
+            catch (LengthPropertyException ex)
             {
                 result.StatusCode = 32;
-                result.Message = "Account truyền vào không hợp lệ (Ví dụ username có độ dài phải > 2 và < 15)";
+                result.Message = ex.Message;
+                return BadRequest(result);
+
             }
             catch (DuplicateDataException ex)
             {
                 result.StatusCode = 21;
                 result.Message = ex.Message;
+                return BadRequest(result);
             }
             catch (Exception ex)
             {
