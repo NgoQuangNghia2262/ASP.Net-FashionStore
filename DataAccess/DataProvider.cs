@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess
 {
-    internal class DataProvider
+    public class DataProvider
     {
         private readonly string str = @"Data Source=DESKTOP-BOC9JRS\SQLEXPRESS;Initial Catalog=FashionStore;Integrated Security=True";
         private static DataProvider? instance;
@@ -19,41 +19,56 @@ namespace DataAccess
         }
 
         private DataProvider() { }
-        public DataTable ExecuteQuery(string query )
+        public DataTable ExecuteQuery(string query)
         {
             DataTable dt = new DataTable();
             using (SqlConnection conne = new SqlConnection(str))
             {
                 conne.Open();
                 SqlCommand cmd = new SqlCommand(query, conne);
-               
+
                 SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                 adapter.Fill(dt);
-               
+
                 conne.Close();
             }
             return dt;
         }
-        public int ExecuteNonQuery(string query )
+        public async Task<DataTable> ExecuteQueryAsync(string query)
+        {
+            DataTable dt = new DataTable();
+            using (SqlConnection conne = new SqlConnection(str))
+            {
+                conne.Open();
+                SqlCommand cmd = new SqlCommand(query, conne);
+                SqlDataReader record = await cmd.ExecuteReaderAsync();
+                dt.Load(record);
+                conne.Close();
+            }
+            return dt;
+        }
+        async public Task<int> ExecuteNonQueryAsync(string query)
         {
             int dt = 0;
             using (SqlConnection conne = new SqlConnection(str))
             {
                 conne.Open();
                 SqlCommand cmd = new SqlCommand(query, conne);
-                dt = cmd.ExecuteNonQuery();
+                dt = await cmd.ExecuteNonQueryAsync();
                 conne.Close();
             }
             return dt;
         }
-        public object ExecutesScalar(string query )
+        public Task<object> ExecuteScalarAsync(string query)
         {
-            object dt = 0;
+            Task<object> dt;
             using (SqlConnection conne = new SqlConnection(str))
             {
                 conne.Open();
                 SqlCommand cmd = new SqlCommand(query, conne);
-                dt = cmd.ExecuteScalar();
+#pragma warning disable CS8619 
+                dt = cmd.ExecuteScalarAsync();
+#pragma warning restore CS8619 
                 conne.Close();
             }
             return dt;

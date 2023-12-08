@@ -17,38 +17,32 @@ namespace DataAccess
             IKeyProduct? keyProduct = obj as IKeyProduct;
             string query = $"DELETE FROM product " +
             $"WHERE name = N'{keyProduct?.name}' AND color = N'{keyProduct?.color}' AND size = N'{keyProduct?.size}'";
-            DataProvider.Instance.ExecuteNonQuery(query);
+            _ = DataProvider.Instance.ExecuteNonQueryAsync(query);
         }
-        public DataTable FindAll(int PageSize, int PageNumber)
+        public Task<DataTable> FindAll(int PageSize, int PageNumber)
         {
             string query = $"Exec GetPagedProducts @PageSize = {PageSize} , @PageNumber = {PageNumber}";
-            DataTable result = DataProvider.Instance.ExecuteQuery(query);
-            return result;
+            return DataProvider.Instance.ExecuteQueryAsync(query);
         }
-
-
-        public DataTable FindByWord(string word)
+        public Task<DataTable> FindByWord(int PageSize, int PageNumber)
         {
-            string query = $"SELECT * FROM product WHERE name LIKE N'%{word}%' OR category LIKE N'%{word}%' OR describe LIKE N'%{word}%'";
-            DataTable result = DataProvider.Instance.ExecuteQuery(query);
-            return result;
+            string query = $"";
+            return DataProvider.Instance.ExecuteQueryAsync(query);
         }
 
-        public DataTable FindImgNamePriceProducts(int PageSize, int PageNumber)
+        public Task<DataTable> FindImgNamePriceProducts(int PageSize, int PageNumber)
         {
             string query = $"Exec [GetPagedProductsGroupByImgNamePrice] @PageSize = {PageSize} , @PageNumber = {PageNumber}";
-            DataTable result = DataProvider.Instance.ExecuteQuery(query);
-            return result;
+            return DataProvider.Instance.ExecuteQueryAsync(query);
         }
 
-        public DataTable FindOne(IKey name)
+        public Task<DataTable> FindOne(IKey name)
         {
             IKeyProduct? keyProduct = name as IKeyProduct;
             string query = $"SELECT * FROM product " +
                    $"WHERE name = N'{keyProduct?.name}' AND color = N'{keyProduct?.color}' AND size = N'{keyProduct?.size}'";
 
-            DataTable result = DataProvider.Instance.ExecuteQuery(query);
-            return result;
+            return DataProvider.Instance.ExecuteQueryAsync(query);
         }
         public void Save(dynamic obj)
         {
@@ -64,7 +58,7 @@ namespace DataAccess
             @discount = {product.discount},
             @describe = N'{product.describe}',
             @inventory = {product.inventory}";
-            DataProvider.Instance.ExecuteNonQuery(query);
+            _ = DataProvider.Instance.ExecuteNonQueryAsync(query);
         }
     }
 }

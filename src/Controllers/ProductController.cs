@@ -19,15 +19,12 @@ namespace src.Controllers
 
         [HttpGet]
         [Route("FindImgNamePriceProducts")]
-        public ActionResult<ResponseResult<Product[]>> FindImgNamePriceProducts(int PageSize, int PageNumber)
+        public async Task<ActionResult<ResponseResult<Product[]>>> FindImgNamePriceProducts(int PageSize, int PageNumber)
         {
             ResponseResult<Product[]> res = new ResponseResult<Product[]>();
             try
             {
-                int total = 0;
-                Product[] products = bus.FindImgNamePriceProducts(PageSize, PageNumber, out total);
-                res.Data = products;
-                res.TotalRows = total;
+                res = await bus.FindImgNamePriceProducts(PageSize, PageNumber);
                 res.StatusCode = 200;
             }
             catch (Exception ex)
@@ -103,14 +100,13 @@ namespace src.Controllers
         }
         [HttpPost]
         [Route("find-one")]
-        public ActionResult<ResponseResult<Product>> FindOne(Product key)
+        public async Task<ActionResult<ResponseResult<Product>>> FindOne(Product key)
         {
             ResponseResult<Product> result = new ResponseResult<Product>();
             try
             {
-                Product product = Bussiness<Product>.FindOne(key);
+                result = await Bussiness<Product>.FindOne(key);
                 result.StatusCode = 200;
-                result.Data = product;
             }
             catch (ArgumentException ex)
             {
@@ -172,16 +168,13 @@ namespace src.Controllers
 
         [HttpGet]
         [Route("find-all")]
-        public ActionResult<ResponseResult<Product[]>> FindAll(int PageSize, int PageNumber)
+        public async Task<ActionResult<ResponseResult<Product[]>>> FindAll(int PageSize, int PageNumber)
         {
             ResponseResult<Product[]> result = new ResponseResult<Product[]>();
             try
             {
-                int TotalRows = 0;
-                Product[] products = Bussiness<Product>.FindAll(PageSize, PageNumber, out TotalRows);
+                result = await Bussiness<Product>.FindAll(PageSize, PageNumber);
                 result.StatusCode = 200;
-                result.Data = products;
-                result.TotalRows = TotalRows;
             }
             catch (DataNotFoundException ex)
             {

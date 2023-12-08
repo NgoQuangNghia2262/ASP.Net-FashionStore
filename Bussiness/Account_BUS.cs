@@ -36,9 +36,9 @@ namespace Bussiness
             if (!isUsername) { throw new LengthPropertyException("Username không hợp lệ."); }
             return true;
         }
-        public bool ExistsModel(IKey obj)
+        public async Task<bool> ExistsModel(IKey obj)
         {
-            DataTable dt = ICrud.FindOne(obj);
+            DataTable dt = await ICrud.FindOne(obj);
             return dt.Rows.Count > 0;
         }
         public void Login(HttpContext context, Account account)
@@ -59,9 +59,9 @@ namespace Bussiness
         {
             ActionCookie.DeleteCookie(res, "AccessToken");
         }
-        public void Regist(Account account)
+        public async void Regist(Account account)
         {
-            DataTable dt = ICrud.FindOne(account);
+            DataTable dt = await ICrud.FindOne(account);
             if (dt.Rows.Count > 0)
             {
                 throw new DuplicateDataException("Account đã tồn tại");
@@ -71,9 +71,9 @@ namespace Bussiness
             ICrud.Save(account);
 
         }
-        public void ChangePassword(Account account, string? newPass)
+        public async void ChangePassword(Account account, string? newPass)
         {
-            DataTable dt = ICrud.FindOne(account);
+            DataTable dt = await ICrud.FindOne(account);
             if (dt.Rows.Count == 0)
             {
                 throw new DataNotFoundException("not found");

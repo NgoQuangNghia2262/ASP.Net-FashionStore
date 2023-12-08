@@ -1,10 +1,5 @@
 ﻿using DataAccess.Interface;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Model.Interface;
 using Model;
 
@@ -16,18 +11,18 @@ namespace DataAccess
         {
             IKeyAccount? account = obj as IKeyAccount;
             if (account == null) { throw new InvalidCastException("dynamic obj không phải là 1 account"); }
-            DataProvider.Instance.ExecuteNonQuery($"delete Account where Username = '{account?.username}'");
+            _ = DataProvider.Instance.ExecuteNonQueryAsync($"delete Account where Username = '{account?.username}'");
         }
 
-        public DataTable FindAll(int PageSize, int PageNumber)
+        public Task<DataTable> FindAll(int PageSize, int PageNumber)
         {
-            return DataProvider.Instance.ExecuteQuery($"Exec [GetPagedAccounts] @PageSize = {PageSize} , @PageNumber = {PageNumber}");
+            return DataProvider.Instance.ExecuteQueryAsync($"Exec [GetPagedAccounts] @PageSize = {PageSize} , @PageNumber = {PageNumber}");
         }
-        public DataTable FindOne(IKey obj)
+        public Task<DataTable> FindOne(IKey obj)
         {
             IKeyAccount? account = obj as IKeyAccount;
             if (account == null) { throw new InvalidCastException("dynamic obj không phải là 1 account"); }
-            return DataProvider.Instance.ExecuteQuery($"select * from Account where Username = '{account?.username}'");
+            return DataProvider.Instance.ExecuteQueryAsync($"select * from Account where Username = '{account?.username}'");
         }
 
         public void Login(Account account)
@@ -40,7 +35,7 @@ namespace DataAccess
         {
             Account? account = obj as Account;
             if (account == null) { throw new InvalidCastException("dynamic obj không phải là 1 account"); }
-            DataProvider.Instance.ExecuteNonQuery($"UpsertAccount @username='{account.username}' , @password='{account.password}' , @permissions='{account.permissions}'");
+            _ = DataProvider.Instance.ExecuteNonQueryAsync($"UpsertAccount @username='{account.username}' , @password='{account.password}' , @permissions='{account.permissions}'");
         }
     }
 }

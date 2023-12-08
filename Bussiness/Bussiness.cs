@@ -1,4 +1,5 @@
 ﻿using Bussiness.Exceptions;
+using Model;
 using Model.Interface;
 using System.Data;
 
@@ -24,13 +25,13 @@ namespace Bussiness
             }
         }
 
-        public static void Delete(IKey obj)
+        public static async void Delete(IKey obj)
         {
             try
             {
                 ControlManager.InstanceForICRUAndBUS instance = ControlManager.CreateInstanceForICRUDAndBUS(typeof(T));
                 instance.BUS.ValidateKeyModel(obj);
-                if (!instance.BUS.ExistsModel(obj))
+                if (!await instance.BUS.ExistsModel(obj))
                 {
                     throw new DataConstraintViolationException("Obj chưa có trong cơ sở dữ liệu , không thể xóa");
                 }
@@ -45,31 +46,35 @@ namespace Bussiness
                 throw new InvalidCastException("object obj không phải là 1 Model" + ex.Message);
             }
         }
-        public static T[] FindAll(int PageSize, int PageNumber, out int totalRows)
+        public static async Task<ResponseResult<T[]>> FindAll(int PageSize, int PageNumber)
         {
             try
             {
+                ResponseResult<T[]> result = new ResponseResult<T[]>();
                 DataAccess.Interface.ICRUD instance = ControlManager.CreateInstanceForICRUDAndBUS(typeof(T)).ICrud;
-                DataTable result = new DataTable();
-                result = instance.FindAll(PageSize, PageNumber);
-                if (result.Rows.Count == 0) { throw new DataNotFoundException("No results found."); }
-                totalRows = int.Parse(result.Rows[0]["TotalRows"]?.ToString() ?? "");
-                return Middleware.Convert<T>.DatatableToModel(result);
+                DataTable data = await instance.FindAll(PageSize, PageNumber);
+                if (data.Rows.Count == 0) { throw new DataNotFoundException("No datas found."); }
+                int totalRows = int.Parse(data.Rows[0]["TotalRows"]?.ToString() ?? "");
+                result.Data = Middleware.Convert<T>.DatatableToModel(data);
+                result.TotalRows = totalRows;
+                return result;
             }
             catch (ArgumentException ex)
             {
                 throw ex;
             }
         }
-        public static T FindOne(IKey obj)
+        public static async Task<ResponseResult<T>> FindOne(IKey obj)
         {
             try
             {
+                ResponseResult<T> result = new ResponseResult<T>();
                 ControlManager.InstanceForICRUAndBUS instance = ControlManager.CreateInstanceForICRUDAndBUS(typeof(T));
                 instance.BUS.ValidateKeyModel(obj);
-                DataTable result = instance.ICrud.FindOne(obj);
-                if (result.Rows.Count == 0) { throw new DataNotFoundException("No results found."); }
-                return Middleware.Convert<T>.DataRowToModel(result.Rows[0]);
+                DataTable data = await instance.ICrud.FindOne(obj);
+                if (data.Rows.Count == 0) { throw new DataNotFoundException("No datas found."); }
+                result.Data = Middleware.Convert<T>.DataRowToModel(data.Rows[0]);
+                return result;
             }
             catch (ArgumentException ex)
             {
@@ -79,6 +84,10 @@ namespace Bussiness
             {
                 throw new InvalidCastException("object obj không phải là 1 Model" + ex.Message);
             }
+        }
+        public static void Test()
+        {
+            _ = DataAccess.DataProvider.Instance.ExecuteQueryAsync("select * from Account");
         }
     }
 }

@@ -17,6 +17,14 @@ namespace src.Controllers
     [ApiController]
     public class AccountController : ControllerBase, ICRUD<Account>
     {
+        [HttpGet]
+        [Route("test")]
+        public ActionResult Test()
+        {
+            Bussiness<Account>.Test();
+            return Ok(0);
+        }
+
         [HttpPost]
         [Route("create")]
         public ActionResult<ResponseResult> Create(Account obj)
@@ -87,16 +95,13 @@ namespace src.Controllers
         }
         [HttpGet]
         [Route("get-all")]
-        public ActionResult<ResponseResult<Account[]>> FindAll(int PageSize, int PageNumber)
+        public async Task<ActionResult<ResponseResult<Account[]>>> FindAll(int PageSize, int PageNumber)
         {
             ResponseResult<Account[]> result = new ResponseResult<Account[]>();
             try
             {
-                int TotalRows = 0;
-                Account[] accounts = Bussiness<Account>.FindAll(PageSize, PageNumber, out TotalRows);
+                result = await Bussiness<Account>.FindAll(PageSize, PageNumber);
                 result.StatusCode = 200;
-                result.Data = accounts;
-                result.TotalRows = TotalRows;
             }
             catch (DataNotFoundException ex)
             {
@@ -123,14 +128,13 @@ namespace src.Controllers
 
         [HttpPost]
         [Route("get-one")]
-        public ActionResult<ResponseResult<Account>> FindOne(Account key)
+        public async Task<ActionResult<ResponseResult<Account>>> FindOne(Account key)
         {
             ResponseResult<Account> result = new ResponseResult<Account>();
             try
             {
-                Account account = Bussiness<Account>.FindOne(key);
+                result = await Bussiness<Account>.FindOne(key);
                 result.StatusCode = 200;
-                result.Data = account;
             }
             catch (ArgumentException ex)
             {

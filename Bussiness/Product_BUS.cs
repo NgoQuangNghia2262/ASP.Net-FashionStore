@@ -48,25 +48,31 @@ namespace Bussiness
             }
             return true;
         }
-        public Product[] FindProductByWords(string word)
+        public async Task<ResponseResult<Product[]>> FindProductByWords(int PageSize, int PageNumber)
         {
+            ResponseResult<Product[]> res = new ResponseResult<Product[]>();
             DataTable result = new DataTable();
-            result = dal.FindByWord(word);
+            result = await dal.FindByWord(PageSize, PageNumber);
             if (result.Rows.Count == 0) { throw new DataNotFoundException("No results found."); }
-            return Middleware.Convert<Product>.DatatableToModel(result);
+            res.Data = Middleware.Convert<Product>.DatatableToModel(result);
+            res.TotalRows = int.Parse(result.Rows[0]["TotalRows"]?.ToString() ?? "");
+            return res;
         }
-        public bool ExistsModel(IKey obj)
+        public async Task<bool> ExistsModel(IKey obj)
         {
-            DataTable dt = ICrud.FindOne(obj);
+            DataTable dt = await ICrud.FindOne(obj);
             return dt.Rows.Count > 0;
         }
-        public Product[] FindImgNamePriceProducts(int PageSize, int PageNumber, out int TotalRows)
+        public async Task<ResponseResult<Product[]>> FindImgNamePriceProducts(int PageSize, int PageNumber)
         {
+            ResponseResult<Product[]> res = new ResponseResult<Product[]>();
             DataTable result = new DataTable();
-            result = dal.FindImgNamePriceProducts(PageSize, PageNumber);
+            result = await dal.FindImgNamePriceProducts(PageSize, PageNumber);
             if (result.Rows.Count == 0) { throw new DataNotFoundException("No results found."); }
-            TotalRows = int.Parse(result.Rows[0]["TotalRows"]?.ToString() ?? "");
-            return Middleware.Convert<Product>.DatatableToModel(result);
+            int TotalRows = int.Parse(result.Rows[0]["TotalRows"]?.ToString() ?? "");
+            res.Data = Middleware.Convert<Product>.DatatableToModel(result);
+            res.TotalRows = TotalRows;
+            return res;
         }
     }
 }
