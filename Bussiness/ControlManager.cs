@@ -1,7 +1,5 @@
 ﻿using Bussiness.Interface;
 using DataAccess;
-using Model;
-using System.Data;
 
 namespace Bussiness
 {
@@ -11,10 +9,10 @@ namespace Bussiness
         {
             internal DataAccess.Interface.ICRUD ICrud;
             internal IValidate BUS;
-        } 
+        }
         internal static InstanceForICRUAndBUS CreateInstanceForICRUDAndBUS(Type type)
         {
-            if(type == null) { throw new ArgumentNullException("Không thể tạo instance cho 1 model null"); }
+            if (type == null) { throw new ArgumentNullException("Không thể tạo instance cho 1 model null"); }
             InstanceForICRUAndBUS result = new InstanceForICRUAndBUS();
             string objType = type.Name;
             switch (objType)
@@ -35,6 +33,6 @@ namespace Bussiness
             }
             return result;
         }
-       
+
     }
 }

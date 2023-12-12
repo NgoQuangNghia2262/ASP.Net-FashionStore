@@ -5,6 +5,7 @@ namespace Bussiness.Interface
     {
         Task<ResponseResult<Product[]>> FindProductByWords(int PageSize, int PageNumber);
         Task<ResponseResult<Product[]>> FindImgNamePriceProducts(int PageSize, int PageNumber);
+        Task<ResponseResult<string[]>> FindCategorys();
 
     }
 }

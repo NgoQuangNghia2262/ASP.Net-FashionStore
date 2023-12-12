@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccess
 {
@@ -19,21 +14,6 @@ namespace DataAccess
         }
 
         private DataProvider() { }
-        public DataTable ExecuteQuery(string query)
-        {
-            DataTable dt = new DataTable();
-            using (SqlConnection conne = new SqlConnection(str))
-            {
-                conne.Open();
-                SqlCommand cmd = new SqlCommand(query, conne);
-
-                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                adapter.Fill(dt);
-
-                conne.Close();
-            }
-            return dt;
-        }
         public async Task<DataTable> ExecuteQueryAsync(string query)
         {
             DataTable dt = new DataTable();

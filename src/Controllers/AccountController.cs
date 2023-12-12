@@ -13,7 +13,7 @@ using Bussiness.Interface;
 
 namespace src.Controllers
 {
-    [Route("api/account")]
+    [Route("/v1/data/account")]
     [ApiController]
     public class AccountController : ControllerBase, ICRUD<Account>
     {

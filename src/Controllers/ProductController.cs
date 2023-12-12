@@ -7,7 +7,7 @@ using src.Interface;
 
 namespace src.Controllers
 {
-    [Route("api/product")]
+    [Route("/v1/data/product")]
     [ApiController]
     public class ProductController : ControllerBase, ICRUD<Product>
     {
@@ -15,6 +15,14 @@ namespace src.Controllers
         public ProductController(IProduct_BUS bus)
         {
             this.bus = bus;
+        }
+
+        [HttpGet]
+        [Route("test")]
+        public async Task<ActionResult> Test()
+        {
+            await bus.FindCategorys();
+            return Ok(0);
         }
 
         [HttpGet]

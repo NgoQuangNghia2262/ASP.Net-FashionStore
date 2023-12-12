@@ -1,12 +1,8 @@
-﻿using DataAccess.Interface;
+﻿using System.Data;
+using DataAccess.Interface;
 using Model;
 using Model.Interface;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace DataAccess
 {
@@ -27,6 +23,12 @@ namespace DataAccess
         public Task<DataTable> FindByWord(int PageSize, int PageNumber)
         {
             string query = $"";
+            return DataProvider.Instance.ExecuteQueryAsync(query);
+        }
+
+        public Task<DataTable> FindCategorys()
+        {
+            string query = $"select category from Product group by category";
             return DataProvider.Instance.ExecuteQueryAsync(query);
         }
 

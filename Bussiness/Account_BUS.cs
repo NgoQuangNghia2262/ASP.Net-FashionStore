@@ -6,10 +6,7 @@ using DataAccess.Interface;
 using Microsoft.AspNetCore.Http;
 using Model;
 using Model.Interface;
-using System;
 using System.Data;
-using System.Security.Principal;
-
 
 namespace Bussiness
 {
@@ -54,7 +51,12 @@ namespace Bussiness
             Account account = ActionJWT.VerifyJwtToken(token);
             return account.permissions == "admin";
         }
-
+        public bool UserAuth(HttpContext context)
+        {
+            string token = ActionCookie.GetCookieName(context, "AccessToken");
+            Account account = ActionJWT.VerifyJwtToken(token);
+            return account.permissions != "admin";
+        }
         public void Logout(HttpResponse res)
         {
             ActionCookie.DeleteCookie(res, "AccessToken");

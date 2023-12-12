@@ -74,5 +74,21 @@ namespace Bussiness
             res.TotalRows = TotalRows;
             return res;
         }
+        public async Task<ResponseResult<string[]>> FindCategorys()
+        {
+            ResponseResult<string[]> res = new ResponseResult<string[]>();
+            DataTable result = await dal.FindCategorys();
+            if (result.Rows.Count == 0) { throw new DataNotFoundException("No results found."); }
+            string[] categorys = new string[result.Rows.Count];
+            for (int i = 0; i < result.Rows.Count; i++)
+            {
+                if (result.Columns.Contains("category"))
+                {
+                    categorys[i] = result.Rows[i]["category"].ToString() ?? "";
+                }
+            }
+            res.Data = categorys;
+            return res;
+        }
     }
 }
