@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddTransient<IProduct_BUS, Product_BUS>();
-
+builder.Services.AddCors();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -37,13 +37,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 var app = builder.Build();
 
-app.UseHttpsRedirection();
-
+//app.UseHttpsRedirection();
 app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
+app.UseCors(options =>
+{
+    options.WithOrigins("http://localhost:8000")
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials();
+});
 app.MapControllers();
 
 app.Run();

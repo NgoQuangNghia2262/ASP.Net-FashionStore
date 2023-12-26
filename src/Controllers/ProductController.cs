@@ -38,12 +38,12 @@ namespace src.Controllers
 
         [HttpPost]
         [Route("create")]
-        public ActionResult<ResponseResult> Create(Product obj)
+        public async Task<ActionResult<ResponseResult>> Create(Product obj)
         {
             ResponseResult result = new ResponseResult();
             try
             {
-                Bussiness<Product>.Save(obj);
+                await Bussiness<Product>.Save(obj);
                 result.StatusCode = 200;
             }
             catch (DuplicateDataException ex)
@@ -74,12 +74,12 @@ namespace src.Controllers
         }
         [HttpDelete]
         [Route("delete")]
-        public ActionResult<ResponseResult> Delete(Product obj)
+        public async Task<ActionResult<ResponseResult>> Delete(Product obj)
         {
             ResponseResult res = new ResponseResult();
             try
             {
-                Bussiness<Product>.Delete(obj);
+                await Bussiness<Product>.Delete(obj);
                 res.StatusCode = 200;
                 res.Message = "Delete Successfully !!";
             }
@@ -133,13 +133,13 @@ namespace src.Controllers
         }
         [HttpPut]
         [Route("update")]
-        public ActionResult<ResponseResult> Update(Product obj)
+        public async Task<ActionResult<ResponseResult>> Update(Product obj)
         {
 
             ResponseResult result = new ResponseResult();
             try
             {
-                Bussiness<Product>.Save(obj);
+                await Bussiness<Product>.Save(obj);
                 result.StatusCode = 200;
             }
             catch (ArgumentException ex)

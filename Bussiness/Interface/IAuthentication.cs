@@ -10,7 +10,7 @@ namespace Bussiness.Interface
 {
     public interface IAuthentication
     {
-        void Login(HttpContext context , Account account);
+        Task LoginAsync(HttpContext context, Account account);
         bool AdminAuth(HttpContext context);
         void Logout(HttpResponse res);
     }

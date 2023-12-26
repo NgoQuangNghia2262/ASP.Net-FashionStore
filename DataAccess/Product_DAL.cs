@@ -12,12 +12,12 @@ namespace DataAccess
 {
     public class Product_DAL : ICRUD, IProduct_DAL
     {
-        public void Delete(IKey obj)
+        public async Task Delete(IKey obj)
         {
             IKeyProduct? keyProduct = obj as IKeyProduct;
             string query = $"DELETE FROM product " +
             $"WHERE name = N'{keyProduct?.name}' AND color = N'{keyProduct?.color}' AND size = N'{keyProduct?.size}'";
-            _ = DataProvider.Instance.ExecuteNonQueryAsync(query);
+            await DataProvider.Instance.ExecuteNonQueryAsync(query);
         }
         public Task<DataTable> FindAll(int PageSize, int PageNumber)
         {
@@ -44,7 +44,7 @@ namespace DataAccess
 
             return DataProvider.Instance.ExecuteQueryAsync(query);
         }
-        public void Save(dynamic obj)
+        public async Task Save(dynamic obj)
         {
             Product? product = obj as Product;
             if (product == null) { throw new InvalidCastException("dynamic obj không phải là 1 Product"); }
@@ -58,7 +58,7 @@ namespace DataAccess
             @discount = {product.discount},
             @describe = N'{product.describe}',
             @inventory = {product.inventory}";
-            _ = DataProvider.Instance.ExecuteNonQueryAsync(query);
+            await DataProvider.Instance.ExecuteNonQueryAsync(query);
         }
     }
 }

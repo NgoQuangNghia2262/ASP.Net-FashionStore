@@ -34,7 +34,7 @@ namespace DataAccess.Interface
         // Type parameters:
         //     Đối tượng trong lớp DTO
         //    
-        void Save(dynamic obj);
-        void Delete(IKey obj);
+        Task Save(dynamic obj);
+        Task Delete(IKey obj);
     }
 }

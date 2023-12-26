@@ -1,8 +1,6 @@
 ﻿using Bussiness.Exceptions;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Model;
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -43,7 +41,7 @@ namespace Bussiness.Middleware
             byte[] hash;
             using (var algorithm = SHA256.Create())
             {
-                hash = algorithm.ComputeHash(Encoding.UTF8.GetBytes("s"));
+                hash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(JWT_SECRET));
             }
             SymmetricSecurityKey key = new SymmetricSecurityKey(hash);
             TokenValidationParameters validationParameters = new TokenValidationParameters

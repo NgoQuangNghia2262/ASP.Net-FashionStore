@@ -7,13 +7,13 @@ namespace Bussiness
 {
     public class Bussiness<T> where T : IKey// Class này có nhiệm vụ convert và Validate dữ liệu từ DAL -> GUI , class này đại diện cho layer BUS để giao tiếp với GUI , đã xong không sửa nữa
     {
-        public static void Save(object obj)
+        public static async Task Save(object obj)
         {
             try
             {
                 ControlManager.InstanceForICRUAndBUS instance = ControlManager.CreateInstanceForICRUDAndBUS(typeof(T));
                 instance.BUS.ValidateModelData(obj);
-                instance.ICrud.Save(obj);
+                await instance.ICrud.Save(obj);
             }
             catch (ArgumentNullException ex)
             {
@@ -25,7 +25,7 @@ namespace Bussiness
             }
         }
 
-        public static async void Delete(IKey obj)
+        public static async Task Delete(IKey obj)
         {
             try
             {
@@ -35,7 +35,7 @@ namespace Bussiness
                 {
                     throw new DataConstraintViolationException("Obj chưa có trong cơ sở dữ liệu , không thể xóa");
                 }
-                instance.ICrud.Delete(obj);
+                await instance.ICrud.Delete(obj);
             }
             catch (ArgumentNullException ex)
             {

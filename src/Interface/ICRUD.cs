@@ -8,9 +8,9 @@ namespace src.Interface
     {
         Task<ActionResult<ResponseResult<T[]>>> FindAll(int PageSize, int PageNumber);
         Task<ActionResult<ResponseResult<T>>> FindOne(T key);
-        ActionResult<ResponseResult> Create(T obj);
-        ActionResult<ResponseResult> Update(T obj);
-        ActionResult<ResponseResult> Delete(T obj);
+        Task<ActionResult<ResponseResult>> Create(T obj);
+        Task<ActionResult<ResponseResult>> Update(T obj);
+        Task<ActionResult<ResponseResult>> Delete(T obj);
 
     }
 }

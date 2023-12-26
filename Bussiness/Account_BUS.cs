@@ -41,25 +41,27 @@ namespace Bussiness
             DataTable dt = await ICrud.FindOne(obj);
             return dt.Rows.Count > 0;
         }
-        public void Login(HttpContext context, Account account)
+        public async Task LoginAsync(HttpContext context, Account account)
         {
-            account_DAL.Login(account);
-            string nameCookie = "AccessToken";
+            DataTable dt = await ICrud.FindOne(account);
+            if (dt.Rows.Count == 0) { throw new InvalidCredentialsException("Tài khoản hoặc mật khẩu không đúng"); }
+            if (dt.Rows[0]["password"].ToString() != account.password) { throw new InvalidCredentialsException("Tài khoản hoặc mật khẩu không đúng"); }
+            string nameCookie = "accessToken";
             string value = ActionJWT.createJWT(account);
             ActionCookie.AddCookie(context, nameCookie, value);
         }
         public bool AdminAuth(HttpContext context)
         {
-            string token = ActionCookie.GetCookieName(context, "AccessToken");
+            string token = ActionCookie.GetCookieName(context, "accessToken");
             Account account = ActionJWT.VerifyJwtToken(token);
             return account.permissions == "admin";
         }
 
         public void Logout(HttpResponse res)
         {
-            ActionCookie.DeleteCookie(res, "AccessToken");
+            ActionCookie.DeleteCookie(res, "accessToken");
         }
-        public async void Regist(Account account)
+        public async Task Regist(Account account)
         {
             DataTable dt = await ICrud.FindOne(account);
             if (dt.Rows.Count > 0)
@@ -68,7 +70,7 @@ namespace Bussiness
             }
             ValidateKeyModel(account);
             account.password = BCrypt.Net.BCrypt.HashPassword(account.password);
-            ICrud.Save(account);
+            await ICrud.Save(account);
 
         }
         public async void ChangePassword(Account account, string? newPass)
@@ -82,7 +84,7 @@ namespace Bussiness
             if (!verified) { throw new InvalidCredentialsException("Wrong Pass"); }
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(newPass);
             account.password = passwordHash;
-            ICrud.Save(account);
+            await ICrud.Save(account);
         }
     }
 }

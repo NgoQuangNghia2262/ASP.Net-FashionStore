@@ -9,6 +9,5 @@ namespace DataAccess.Interface
 {
     public interface IAccount_DAL
     {
-        void Login(Account account);
     }
 }

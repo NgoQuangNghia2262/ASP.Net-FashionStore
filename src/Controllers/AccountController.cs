@@ -27,12 +27,12 @@ namespace src.Controllers
 
         [HttpPost]
         [Route("create")]
-        public ActionResult<ResponseResult> Create(Account obj)
+        public async Task<ActionResult<ResponseResult>> Create(Account obj)
         {
             ResponseResult result = new ResponseResult();
             try
             {
-                Bussiness<Account>.Save(obj);
+                await Bussiness<Account>.Save(obj);
                 result.StatusCode = 200;
             }
             catch (DuplicateDataException ex)
@@ -65,12 +65,12 @@ namespace src.Controllers
 
         [HttpDelete]
         [Route("delete")]
-        public ActionResult<ResponseResult> Delete(Account obj)
+        public async Task<ActionResult<ResponseResult>> Delete(Account obj)
         {
             ResponseResult res = new ResponseResult();
             try
             {
-                Bussiness<Account>.Delete(obj);
+                await Bussiness<Account>.Delete(obj);
                 res.StatusCode = 200;
                 res.Message = "Delete Successfully !!";
             }
@@ -79,6 +79,12 @@ namespace src.Controllers
             //     res.Message = ex.Message;
             // }
             catch (LengthPropertyException ex)
+            {
+                res.StatusCode = 32;
+                res.Message = ex.Message;
+                return BadRequest(res);
+            }
+            catch (DataConstraintViolationException ex)
             {
                 res.StatusCode = 32;
                 res.Message = ex.Message;
@@ -94,7 +100,7 @@ namespace src.Controllers
             return Ok(res);
         }
         [HttpGet]
-        [Route("get-all")]
+        [Route("find-all")]
         public async Task<ActionResult<ResponseResult<Account[]>>> FindAll(int PageSize, int PageNumber)
         {
             ResponseResult<Account[]> result = new ResponseResult<Account[]>();
@@ -161,12 +167,12 @@ namespace src.Controllers
         }
         [HttpPut]
         [Route("update")]
-        public ActionResult<ResponseResult> Update(Account obj)
+        public async Task<ActionResult<ResponseResult>> Update(Account obj)
         {
             ResponseResult result = new ResponseResult();
             try
             {
-                Bussiness<Account>.Save(obj);
+                await Bussiness<Account>.Save(obj);
                 result.StatusCode = 200;
             }
             catch (ArgumentException ex)
@@ -195,14 +201,13 @@ namespace src.Controllers
 
         [HttpPost]
         [Route("login")]
-        public ActionResult<ResponseResult> Login(Account account)
+        public async Task<ActionResult<ResponseResult>> Login(Account account)
         {
             ResponseResult result = new ResponseResult();
             try
             {
-
                 Bussiness.Interface.IAuthentication authen = new Account_BUS();
-                authen.Login(HttpContext, account);
+                await authen.LoginAsync(HttpContext, account);
                 result.StatusCode = 200;
                 result.Message = "Successfully !!";
             }
@@ -212,6 +217,12 @@ namespace src.Controllers
                 result.Message = ex.Message;
                 return BadRequest(result);
 
+            }
+            catch (InvalidCredentialsException ex)
+            {
+                result.StatusCode = 15;
+                result.Message = ex.Message;
+                return BadRequest(result);
             }
             catch (Exception ex)
             {
@@ -224,39 +235,39 @@ namespace src.Controllers
         }
         [HttpGet]
         [Route("auth")]
-        public ActionResult<ResponseResult> Auth()
-        {
-            ResponseResult result = new ResponseResult();
-            try
-            {
-                Bussiness.Interface.IAuthentication authen = new Account_BUS();
-                authen.AdminAuth(HttpContext);
-                result.StatusCode = 200;
-                result.Message = "Successfully !!";
-                return Ok(result);
-            }
-            catch (NotAuthenticated ex)
-            {
-                result.StatusCode = 16;
-                result.Message = ex.Message;
-                return BadRequest(result);
+        // public async Task<ActionResult<ResponseResult>> Auth()
+        // {
+        //     ResponseResult result = new ResponseResult();
+        //     try
+        //     {
+        //         Bussiness.Interface.IAuthentication authen = new Account_BUS();
+        //         await authen.AdminAuth(HttpContext);
+        //         result.StatusCode = 200;
+        //         result.Message = "Successfully !!";
+        //         return Ok(result);
+        //     }
+        //     catch (NotAuthenticated ex)
+        //     {
+        //         result.StatusCode = 16;
+        //         result.Message = ex.Message;
+        //         return BadRequest(result);
 
-            }
-            catch (SecurityTokenSignatureKeyNotFoundException ex)
-            {
-                result.StatusCode = 41;
-                result.Message = ex.Message;
-                return BadRequest(result);
+        //     }
+        //     catch (SecurityTokenSignatureKeyNotFoundException ex)
+        //     {
+        //         result.StatusCode = 41;
+        //         result.Message = ex.Message;
+        //         return BadRequest(result);
 
-            }
-            catch (Exception ex)
-            {
-                result.StatusCode = 500;
-                result.Message = ex.Message;
-                return BadRequest(result);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         result.StatusCode = 500;
+        //         result.Message = ex.Message;
+        //         return BadRequest(result);
 
-            }
-        }
+        //     }
+        // }
         [HttpGet]
         [Route("log-out")]
         public ActionResult<ResponseResult> LogOut()
@@ -343,13 +354,13 @@ namespace src.Controllers
 
         [HttpPost]
         [Route("regist")]
-        public ActionResult<ResponseResult> Regist(Account account)
+        public async Task<ActionResult<ResponseResult>> Regist(Account account)
         {
             ResponseResult result = new ResponseResult();
             try
             {
                 IAccount_BUS bus = new Account_BUS();
-                bus.Regist(account);
+                await bus.Regist(account);
                 result.StatusCode = 200;
                 result.Message = "Successfully !!!";
             }

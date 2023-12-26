@@ -1,9 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bussiness.Middleware
 {
@@ -20,7 +15,8 @@ namespace Bussiness.Middleware
                 SameSite = SameSiteMode.Strict
             });
         }
-        public static string GetCookieName(HttpContext context , string cookieName) {
+        public static string GetCookieName(HttpContext context, string cookieName)
+        {
             string myCookieValue = context.Request.Cookies[cookieName];
             return myCookieValue;
         }
