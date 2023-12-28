@@ -57,11 +57,8 @@ namespace Bussiness.Middleware
             ClaimsPrincipal jsonToken = tokenHandler.ValidateToken(jwtToken, validationParameters, out _);
             string username = jsonToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
             string? role = jsonToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
-            Account account = new Account
-            {
-                username = username,
-                permissions = role
-            };
+            Account account = new Account(username);
+            account.permissions = role;
             return account;
         }
     }

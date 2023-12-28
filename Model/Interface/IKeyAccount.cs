@@ -8,6 +8,6 @@ namespace Model.Interface
 {
     public interface IKeyAccount : IKey
     {
-        string username { get; set; }
+        string username { get; }
     }
 }

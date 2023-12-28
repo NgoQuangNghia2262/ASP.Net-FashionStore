@@ -8,5 +8,6 @@ namespace Model.Interface
 {
     public interface IKey
     {
+
     }
 }

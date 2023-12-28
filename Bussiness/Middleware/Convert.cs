@@ -7,18 +7,8 @@ namespace Bussiness.Middleware
     {
         public static T DataRowToModel(DataRow row)
         {
-            T result = Activator.CreateInstance<T>(); // Thực hiện tạo instance của Model T bằng phương thức khởi tạo không tham số vậy nên nếu không có sẽ gây ra lỗi [Lưu ý (1)]
-            foreach (DataColumn column in row.Table.Columns) // Lấy ra các trường cửa Datarow (Datarow là 1 hàng dữu liệu trong DB)
-            {
-                // Lấy ra property của đối tượng T dựa vào các columName (Tên của các trường trong DB)
-                PropertyInfo? prop = result?.GetType().GetProperty(column.ColumnName);
-                if (prop == null) { continue; }
-                object value = row[column.ColumnName];
-                // Lấy được trường dữ liệu thì ta set giá trị cho trường đó của T dựa vào dữ liệu từ Datarow
-                prop?.SetValue(result, value, null);
-                // Phương này cần lấy property dựa vào các trường trong DB vậy nên khi thiết kế DB ta cần tạo property trong Model khớp với DB [Lưu ý (2)]
-            }
-            return result;
+            T instance = (T)Activator.CreateInstance(typeof(T), row);
+            return instance;
         }
         public static T[] DatatableToModel(DataTable dataTable)
         {
