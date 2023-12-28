@@ -8,7 +8,7 @@ namespace Model
         private int _id;
         private Product? _product;
         private Bill? _bill;
-        private int _quantity;
+        private int? _quantity;
 
         public BillingDetails()
         {
@@ -35,7 +35,7 @@ namespace Model
         public int id { get => _id; }
         public Product? product { get => _product; set => _product = value; }
         public Bill? bill { get => _bill; set => _bill = value; }
-        public int quantity { get => _quantity; set => _quantity = value; }
+        public int? quantity { get => _quantity; set => _quantity = value; }
     }
 
 }

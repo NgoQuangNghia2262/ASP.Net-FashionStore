@@ -17,9 +17,9 @@ namespace Model
         private double? _inventory;
         private string? _category;
 
-        public string name { get => _name; }
-        public string size { get => _size; }
-        public string color { get => _color; }
+        public string name { get => _name; set => _name = value; }
+        public string size { get => _size; set => _size = value; }
+        public string color { get => _color; set => _color = value; }
         public double? price { get => _price; set => _price = value; }
         public string? img { get => _img; set => _img = value; }
         public string? category { get => _category; set => _category = value; }

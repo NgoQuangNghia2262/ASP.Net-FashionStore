@@ -7,7 +7,7 @@ namespace Bussiness.Middleware
     {
         public static T DataRowToModel(DataRow row)
         {
-            T instance = (T)Activator.CreateInstance(typeof(T), row);
+            T? instance = (T?)Activator.CreateInstance(typeof(T), row);
             return instance;
         }
         public static T[] DatatableToModel(DataTable dataTable)

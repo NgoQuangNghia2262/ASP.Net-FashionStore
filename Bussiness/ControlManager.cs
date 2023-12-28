@@ -11,10 +11,10 @@ namespace Bussiness
         {
             internal DataAccess.Interface.ICRUD ICrud;
             internal IValidate BUS;
-        } 
+        }
         internal static InstanceForICRUAndBUS CreateInstanceForICRUDAndBUS(Type type)
         {
-            if(type == null) { throw new ArgumentNullException("Không thể tạo instance cho 1 model null"); }
+            if (type == null) { throw new ArgumentNullException("Không thể tạo instance cho 1 model null"); }
             InstanceForICRUAndBUS result = new InstanceForICRUAndBUS();
             string objType = type.Name;
             switch (objType)
@@ -31,10 +31,16 @@ namespace Bussiness
                         result.BUS = new Product_BUS();
                         break;
                     }
+                case "Bill":
+                    {
+                        result.ICrud = new Bill_DAL();
+                        result.BUS = new Bill_BUS();
+                        break;
+                    }
                 default: { throw new ArgumentException($"Cannot create instance for object {objType}. Check layer Bussiness at class ControlManager in func CreateInstanceForICRUDAndBUS"); }
             }
             return result;
         }
-       
+
     }
 }

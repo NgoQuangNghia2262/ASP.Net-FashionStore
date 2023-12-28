@@ -7,9 +7,9 @@ namespace Model
     {
         private int _id;
         private string? _note;
-        private DateTime _date;
-        private Supplier _supplier;
-        private double _discount;
+        private DateTime? _date;
+        private Supplier? _supplier;
+        private double? _discount;
         private string? _status;
 
         public ImportingInvoice(int id, string note, DateTime date, Supplier supplier, double discount, string status)
@@ -32,11 +32,11 @@ namespace Model
             _status = row["status"].ToString();
         }
 
-        public int id { get => _id; }
+        public int id { get => _id; set => _id = value; }
         public string? note { get => _note; set => _note = value; }
-        public DateTime date { get => _date; set => _date = value; }
-        public Supplier supplier { get => _supplier; set => _supplier = value; }
-        public double discount { get => _discount; set => _discount = value; }
+        public DateTime? date { get => _date; set => _date = value; }
+        public Supplier? supplier { get => _supplier; set => _supplier = value; }
+        public double? discount { get => _discount; set => _discount = value; }
         public string? status { get => _status; set => _status = value; }
     }
 

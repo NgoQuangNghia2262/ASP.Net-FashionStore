@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Bussiness.Middleware
+namespace Bussiness.Helper
 {
     internal class ActionCookie
     {

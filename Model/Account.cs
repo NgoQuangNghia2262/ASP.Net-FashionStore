@@ -12,13 +12,14 @@ namespace Model
         public string username
         {
             get => _username;
+            set => _username = value;
         }
         public string? password { get => _password; set => _password = value?.Trim(); }
         public string? permissions { get => _permissions; set => _permissions = value?.Trim(); }
         public Account(DataRow row)
         {
             _username = row["username"].ToString();
-            _password = row["password"].ToString();
+            _password = row["password"].ToString().Trim();
             _permissions = row["permissions"].ToString();
         }
         public Account(string username)
