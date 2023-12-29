@@ -10,13 +10,16 @@ using System.Security.Principal;
 using Microsoft.IdentityModel.Tokens;
 using System.Text.Json;
 using Bussiness.Interface;
+using Bussiness.Helper;
 
 namespace src.Controllers
 {
+
     [Route("api/account")]
     [ApiController]
     public class AccountController : ControllerBase, ICRUD<Account>
     {
+        private readonly IAccount_BUS bus = new Account_BUS();
         [HttpGet]
         [Route("test")]
         public ActionResult Test()
@@ -235,13 +238,54 @@ namespace src.Controllers
         }
 
         [HttpGet]
+        [Route("getCartForCustomer")]
+        public async Task<ActionResult<ResponseResult<BillingDetail[]>>> GetCartForCustomer()
+        {
+            ResponseResult<BillingDetail[]> result = new ResponseResult<BillingDetail[]>();
+            string idCustomer;
+            try
+            {
+                //Đã đăng nhập
+                string token = ActionCookie.GetCookieName(HttpContext, "accessToken");
+                Account account = ActionJWT.VerifyJwtToken(token);
+                idCustomer = account.customer == null ? "" : account.customer.id;
+
+            }
+            catch (NotAuthenticated)
+            {
+                if (string.IsNullOrEmpty(HttpContext.Request.Cookies["newCustomer"]))
+                {
+                    result.StatusCode = 404;
+                    result.Message = "Chưa có sản phẩm nào";
+                    return BadRequest(result);
+                }
+                else
+                {
+                    //Chưa đăng nhập và đã mua vài sản phẩm
+                    idCustomer = HttpContext.Request.Cookies["newCustomer"] ?? "";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                result.StatusCode = 500;
+                result.Message = ex.Message;
+                return BadRequest(result);
+            }
+
+            BillingDetail[] billingDetails = await bus.GetCartForCustomer(idCustomer);
+            result.Data = billingDetails;
+            result.StatusCode = 200;
+            return Ok(result);
+        }
+        [HttpGet]
         [Route("auth")]
-        public async Task<ActionResult<ResponseResult>> Auth()
+        public ActionResult<ResponseResult> Auth()
         {
             ResponseResult result = new ResponseResult();
             try
             {
-                Bussiness.Interface.IAuthentication authen = new Account_BUS();
+                IAuthentication authen = new Account_BUS();
                 authen.AdminAuth(HttpContext);
                 result.StatusCode = 200;
                 result.Message = "Successfully !!";
@@ -270,16 +314,35 @@ namespace src.Controllers
             }
         }
         [HttpGet]
+        [Route("getLoggedInUser")]
+        public ActionResult<ResponseResult<Account>> GetLoggedInUser()
+        {
+
+            ResponseResult<Account> result = new ResponseResult<Account>();
+            try
+            {
+                Account account = bus.GetLoggedInUser(HttpContext);
+                result.StatusCode = 200;
+                result.Data = account;
+            }
+            catch (Exception ex)
+            {
+                result.StatusCode = 500;
+                result.Message = ex.Message;
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpGet]
         [Route("log-out")]
         public ActionResult<ResponseResult> LogOut()
         {
             ResponseResult result = new ResponseResult();
             try
             {
-                Bussiness.Interface.IAuthentication authen = new Account_BUS();
+                IAuthentication authen = new Account_BUS();
                 authen.Logout(Response);
                 result.StatusCode = 200;
-                result.Message = "Successfully !!";
             }
             catch (Exception ex)
             {
