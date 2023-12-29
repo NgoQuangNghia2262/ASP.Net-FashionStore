@@ -9,6 +9,7 @@ namespace Model
         private Product? _product;
         private Bill? _bill;
         private int? _quantity;
+        private double? _price;
 
         public BillingDetail()
         {
@@ -32,8 +33,8 @@ namespace Model
                 return;
             }
 
-            _id = row.Table.Columns.Contains("id") ? Convert.ToInt32(row["id"]) : 0;
-            _quantity = row.Table.Columns.Contains("quantity") ? Convert.ToInt32(row["quantity"]) : 0;
+            _id = row.Table.Columns.Contains("id") && !string.IsNullOrEmpty(row["id"].ToString()) ? Convert.ToInt32(row["id"]) : 0;
+            _quantity = row.Table.Columns.Contains("quantity") && !string.IsNullOrEmpty(row["quantity"].ToString()) ? Convert.ToInt32(row["quantity"]) : 0;
 
             if (row.Table.Columns.Contains("nameProduct") &&
                 row.Table.Columns.Contains("sizeProduct") &&
@@ -46,6 +47,8 @@ namespace Model
             {
                 _bill = new Bill(Convert.ToInt32(row["idBill"]));
             }
+            _price = row.Table.Columns.Contains("price") && !string.IsNullOrEmpty(row["price"].ToString()) ? Convert.ToInt32(row["price"]) : 0;
+
         }
 
         public int id
@@ -64,6 +67,7 @@ namespace Model
         public Product? product { get => _product; set => _product = value; }
         public Bill? bill { get => _bill; set => _bill = value; }
         public int? quantity { get => _quantity; set => _quantity = value; }
+        public double? price { get => _price; set => _price = value; }
     }
 
 }

@@ -5,6 +5,6 @@ namespace DataAccess.Interface
 {
     public interface IAccount_DAL
     {
-
+        Task<DataTable> GetCartForCustomer(string idCustomer);
     }
 }

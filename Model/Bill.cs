@@ -6,9 +6,9 @@ namespace Model
     public class Bill : IKeyBill
     {
         private int _id;
-        private DateTime _date;
+        private DateTime _date = DateTime.MinValue;
         private string? _status;
-        private double? _discount;
+        private double? _discount = 0;
         private Customer? _customer;
         public Bill()
         {
@@ -34,10 +34,15 @@ namespace Model
                 return;
             }
             _id = row.Table.Columns.Contains("id") ? Convert.ToInt32(row["id"]) : 0;
-            _date = row.Table.Columns.Contains("date") ? Convert.ToDateTime(row["date"]) : DateTime.MinValue;
+            if (row.Table.Columns.Contains("date"))
+            {
+                if (!string.IsNullOrEmpty(row["date"].ToString()))
+                {
+                    _date = Convert.ToDateTime(row["date"]);
+                }
+            }
             _status = row.Table.Columns.Contains("status") ? row["status"].ToString() : string.Empty;
-            _discount = row.Table.Columns.Contains("discount") ? Convert.ToDouble(row["discount"]) : 0.0;
-
+            _discount = row.Table.Columns.Contains("discount") && !string.IsNullOrEmpty(row["discount"].ToString()) ? Convert.ToDouble(row["discount"]) : 0.0;
             if (row.Table.Columns.Contains("customer"))
             {
                 _customer = new Customer(row["customer"].ToString() ?? "");
@@ -59,7 +64,18 @@ namespace Model
         }
         public DateTime date { get => _date; set => _date = value; }
         public string? status { get => _status; set => _status = value; }
-        public double? discount { get => _discount; set => _discount = value; }
+        public double? discount
+        {
+            get
+            {
+                if (_discount == null)
+                {
+                    return 0;
+                }
+                return _discount;
+            }
+            set => _discount = value;
+        }
         public Customer? customer { get => _customer; set => _customer = value; }
     }
 }
