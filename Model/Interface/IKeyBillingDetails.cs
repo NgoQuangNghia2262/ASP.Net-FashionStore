@@ -1,6 +1,6 @@
 namespace Model.Interface
 {
-    public interface IKeyBillingDetails : IKey
+    public interface IKeyBillingDetail : IKey
     {
         int id { get; }
     }

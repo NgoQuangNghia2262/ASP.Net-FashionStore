@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Reflection;
 
-namespace Bussiness.Middleware
+namespace Bussiness.Helper
 {
     internal class Convert<T>
     {

@@ -55,7 +55,7 @@ namespace Bussiness
                 DataTable data = await instance.FindAll(PageSize, PageNumber);
                 if (data.Rows.Count == 0) { throw new DataNotFoundException("No datas found."); }
                 int totalRows = int.Parse(data.Rows[0]["TotalRows"]?.ToString() ?? "");
-                result.Data = Middleware.Convert<T>.DatatableToModel(data);
+                result.Data = Helper.Convert<T>.DatatableToModel(data);
                 result.TotalRows = totalRows;
                 return result;
             }
@@ -73,7 +73,7 @@ namespace Bussiness
                 instance.BUS.ValidateKeyModel(obj);
                 DataTable data = await instance.ICrud.FindOne(obj);
                 if (data.Rows.Count == 0) { throw new DataNotFoundException("No datas found."); }
-                result.Data = Middleware.Convert<T>.DataRowToModel(data.Rows[0]);
+                result.Data = Helper.Convert<T>.DataRowToModel(data.Rows[0]);
                 return result;
             }
             catch (ArgumentException ex)

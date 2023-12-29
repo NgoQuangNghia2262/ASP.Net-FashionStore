@@ -26,12 +26,25 @@ namespace Model
         }
         public ImportingInvoicesDetail(DataRow row)
         {
-            _id = Convert.ToInt32(row["id"]);
-            _quantity = Convert.ToInt32(row["quantity"]);
-#pragma warning disable CS8604 // Possible null reference argument.
-            _product = new Product(row["nameProduct"].ToString(), row["sizeProduct"].ToString(), row["colorProduct"].ToString());
-#pragma warning restore CS8604 // Possible null reference argument.
-            _bill = new Bill(Convert.ToInt32(row["idbill"]));
+            if (row == null)
+            {
+                return;
+            }
+
+            _id = row.Table.Columns.Contains("id") ? Convert.ToInt32(row["id"]) : 0;
+            _quantity = row.Table.Columns.Contains("quantity") ? Convert.ToInt32(row["quantity"]) : 0;
+
+            if (row.Table.Columns.Contains("nameProduct") &&
+                row.Table.Columns.Contains("sizeProduct") &&
+                row.Table.Columns.Contains("colorProduct"))
+            {
+                _product = new Product(row["nameProduct"].ToString(), row["sizeProduct"].ToString(), row["colorProduct"].ToString());
+            }
+
+            if (row.Table.Columns.Contains("idBill"))
+            {
+                _bill = new Bill(Convert.ToInt32(row["idBill"]));
+            }
         }
         public int id { get => _id; set => _id = value; }
         public Product? product { get => _product; set => _product = value; }

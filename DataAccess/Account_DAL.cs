@@ -29,7 +29,8 @@ namespace DataAccess
         {
             Account? account = obj as Account;
             if (account == null) { throw new InvalidCastException("dynamic obj không phải là 1 account"); }
-            await DataProvider.Instance.ExecuteNonQueryAsync($"UpsertAccount @username='{account.username}' , @password='{account.password}' , @permissions='{account.permissions}'");
+            string proc = $"UpsertAccount @username='{account.username}' , @password='{account.password}' , @permissions='{account.permissions}' , @customer ='{account.customer.id}'";
+            await DataProvider.Instance.ExecuteNonQueryAsync(proc);
         }
     }
 }

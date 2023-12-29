@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Bussiness.Helper
 {
-    internal class ActionJWT
+    public class ActionJWT
     {
         private readonly static string JWT_SECRET = "NghiaxNghiaxx";
         public static string createJWT(Account obj)
@@ -24,6 +24,7 @@ namespace Bussiness.Helper
             Claim[] claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier,obj.username),
+                new Claim(ClaimTypes.Actor,obj.customer.id),
                 new Claim(ClaimTypes.Role,obj.permissions ?? "")
             };
             JwtSecurityToken token = new JwtSecurityToken(
@@ -57,8 +58,10 @@ namespace Bussiness.Helper
             ClaimsPrincipal jsonToken = tokenHandler.ValidateToken(jwtToken, validationParameters, out _);
             string username = jsonToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "";
             string? role = jsonToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            string? idcustomer = jsonToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Actor)?.Value;
             Account account = new Account(username);
             account.permissions = role;
+            account.customer = new Customer(idcustomer ?? "");
             return account;
         }
     }

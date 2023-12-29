@@ -61,19 +61,37 @@ namespace Model
         }
         public Product(DataRow row)
         {
-#pragma warning disable CS8601 // Possible null reference assignment.
-            _name = row["name"].ToString();
-            _size = row["size"].ToString();
-            _color = row["color"].ToString();
-#pragma warning restore CS8601 // Possible  reference assignment.
+            if (row == null)
+            {
+                throw new ArgumentNullException(nameof(row));
+            }
 
-            _price = row["price"] is DBNull ? null : (double?)Convert.ToDouble(row["price"]);
-            _img = row["img"] is DBNull ? null : row["img"].ToString();
-            _discount = row["discount"] is DBNull ? null : (double?)Convert.ToDouble(row["discount"]);
-            _describe = row["describe"] is DBNull ? null : row["describe"].ToString();
-            _inventory = row["inventory"] is DBNull ? null : (double?)Convert.ToDouble(row["inventory"]);
-            _category = row["category"] is DBNull ? null : row["category"].ToString();
+            _name = row.Table.Columns.Contains("name") ? row["name"]?.ToString() : string.Empty;
+            _size = row.Table.Columns.Contains("size") ? row["size"]?.ToString() : string.Empty;
+            _color = row.Table.Columns.Contains("color") ? row["color"]?.ToString() : string.Empty;
+
+            if (row.Table.Columns.Contains("price"))
+            {
+                price = Convert.ToDouble(row["price"]);
+            }
+
+            img = row.Table.Columns.Contains("img") ? row["img"]?.ToString() : null;
+
+            if (row.Table.Columns.Contains("discount"))
+            {
+                discount = Convert.ToDouble(row["discount"]);
+            }
+
+            describe = row.Table.Columns.Contains("describe") ? row["describe"]?.ToString() : null;
+
+            if (row.Table.Columns.Contains("inventory"))
+            {
+                inventory = Convert.ToDouble(row["inventory"]);
+            }
+
+            category = row.Table.Columns.Contains("category") ? row["category"]?.ToString() : null;
         }
+
         public Product(double price, string name, string size, string color, string img, double discount, string describe, double inventory, string category)
         {
             this.price = price;

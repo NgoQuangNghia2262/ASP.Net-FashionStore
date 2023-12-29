@@ -5,7 +5,7 @@ using System.Data;
 
 namespace DataAccess
 {
-    public class Bill_DAL : ICRUD
+    public class Bill_DAL : ICRUD, IBill_DAL
     {
         public async Task Delete(IKey obj)
         {
@@ -46,6 +46,22 @@ namespace DataAccess
             }
             string query = $"EXEC UpsertBill @id = {bill.id} , @date = '{bill.date.ToString("yyyy-MM-dd HH:mm:ss")}' , @status = N'{bill.status}',@discount = {bill.discount},@customer_id = '{(bill.customer?.id)}'";
             await DataProvider.Instance.ExecuteNonQueryAsync(query);
+        }
+        public void Purchase(BillingDetail detail, string khachhang)
+        {
+            string query = $@"EXEC Purchase
+            @name = N'{detail.product.name}',
+            @color = N'{detail.product.color}',
+            @size = '{detail.product.size}',
+            @quantity= {detail.quantity},
+            @customer = '{khachhang}'";
+            _ = DataProvider.Instance.ExecuteNonQueryAsync(query);
+        }
+
+        public Task<DataTable> GetBillingDetails(int idbill)
+        {
+            string query = $"select * from BillingDetails where idBill = {idbill}";
+            return DataProvider.Instance.ExecuteQueryAsync(query);
         }
     }
 }

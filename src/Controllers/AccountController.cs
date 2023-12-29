@@ -233,41 +233,42 @@ namespace src.Controllers
             }
             return Ok(result);
         }
+
         [HttpGet]
         [Route("auth")]
-        // public async Task<ActionResult<ResponseResult>> Auth()
-        // {
-        //     ResponseResult result = new ResponseResult();
-        //     try
-        //     {
-        //         Bussiness.Interface.IAuthentication authen = new Account_BUS();
-        //         await authen.AdminAuth(HttpContext);
-        //         result.StatusCode = 200;
-        //         result.Message = "Successfully !!";
-        //         return Ok(result);
-        //     }
-        //     catch (NotAuthenticated ex)
-        //     {
-        //         result.StatusCode = 16;
-        //         result.Message = ex.Message;
-        //         return BadRequest(result);
+        public async Task<ActionResult<ResponseResult>> Auth()
+        {
+            ResponseResult result = new ResponseResult();
+            try
+            {
+                Bussiness.Interface.IAuthentication authen = new Account_BUS();
+                authen.AdminAuth(HttpContext);
+                result.StatusCode = 200;
+                result.Message = "Successfully !!";
+                return Ok(result);
+            }
+            catch (NotAuthenticated ex)
+            {
+                result.StatusCode = 16;
+                result.Message = ex.Message;
+                return BadRequest(result);
 
-        //     }
-        //     catch (SecurityTokenSignatureKeyNotFoundException ex)
-        //     {
-        //         result.StatusCode = 41;
-        //         result.Message = ex.Message;
-        //         return BadRequest(result);
+            }
+            catch (SecurityTokenSignatureKeyNotFoundException ex)
+            {
+                result.StatusCode = 41;
+                result.Message = ex.Message;
+                return BadRequest(result);
 
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         result.StatusCode = 500;
-        //         result.Message = ex.Message;
-        //         return BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                result.StatusCode = 500;
+                result.Message = ex.Message;
+                return BadRequest(result);
 
-        //     }
-        // }
+            }
+        }
         [HttpGet]
         [Route("log-out")]
         public ActionResult<ResponseResult> LogOut()
@@ -360,7 +361,7 @@ namespace src.Controllers
             try
             {
                 IAccount_BUS bus = new Account_BUS();
-                await bus.Regist(account);
+                await bus.Regist(account, HttpContext);
                 result.StatusCode = 200;
                 result.Message = "Successfully !!!";
             }

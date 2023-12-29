@@ -37,6 +37,18 @@ namespace Bussiness
                         result.BUS = new Bill_BUS();
                         break;
                     }
+                case "BillingDetail":
+                    {
+                        result.ICrud = new BillingDetail_DAL();
+                        result.BUS = new BillingDetail_BUS();
+                        break;
+                    }
+                case "Customer":
+                    {
+                        result.ICrud = new Customer_DAL();
+                        result.BUS = new Customer_BUS();
+                        break;
+                    }
                 default: { throw new ArgumentException($"Cannot create instance for object {objType}. Check layer Bussiness at class ControlManager in func CreateInstanceForICRUDAndBUS"); }
             }
             return result;

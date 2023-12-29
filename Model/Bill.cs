@@ -29,12 +29,21 @@ namespace Model
         }
         public Bill(DataRow row)
         {
-            _id = Convert.ToInt32(row["id"]);
-            _date = Convert.ToDateTime(row["date"]);
-            _status = row["status"].ToString();
-            _discount = Convert.ToDouble(row["discount"]);
-            _customer = new Customer(row["customer"].ToString() ?? "");
+            if (row == null)
+            {
+                return;
+            }
+            _id = row.Table.Columns.Contains("id") ? Convert.ToInt32(row["id"]) : 0;
+            _date = row.Table.Columns.Contains("date") ? Convert.ToDateTime(row["date"]) : DateTime.MinValue;
+            _status = row.Table.Columns.Contains("status") ? row["status"].ToString() : string.Empty;
+            _discount = row.Table.Columns.Contains("discount") ? Convert.ToDouble(row["discount"]) : 0.0;
+
+            if (row.Table.Columns.Contains("customer"))
+            {
+                _customer = new Customer(row["customer"].ToString() ?? "");
+            }
         }
+
         public int id
         {
             get
@@ -44,7 +53,7 @@ namespace Model
                     Random random = new Random();
                     return random.Next(1, 999999999);
                 }
-                return 0;
+                return _id;
             }
             set => _id = value;
         }

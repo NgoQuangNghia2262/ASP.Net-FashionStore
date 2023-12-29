@@ -54,7 +54,7 @@ namespace Bussiness
             DataTable result = new DataTable();
             result = await dal.FindByWord(PageSize, PageNumber);
             if (result.Rows.Count == 0) { throw new DataNotFoundException("No results found."); }
-            res.Data = Middleware.Convert<Product>.DatatableToModel(result);
+            res.Data = Helper.Convert<Product>.DatatableToModel(result);
             res.TotalRows = int.Parse(result.Rows[0]["TotalRows"]?.ToString() ?? "");
             return res;
         }
@@ -70,7 +70,7 @@ namespace Bussiness
             result = await dal.FindImgNamePriceProducts(PageSize, PageNumber);
             if (result.Rows.Count == 0) { throw new DataNotFoundException("No results found."); }
             int TotalRows = int.Parse(result.Rows[0]["TotalRows"]?.ToString() ?? "");
-            res.Data = Middleware.Convert<Product>.DatatableToModel(result);
+            res.Data = Helper.Convert<Product>.DatatableToModel(result);
             res.TotalRows = TotalRows;
             return res;
         }

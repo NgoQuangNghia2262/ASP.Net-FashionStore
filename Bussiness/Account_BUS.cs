@@ -43,7 +43,9 @@ namespace Bussiness
         {
             DataTable dt = await ICrud.FindOne(account);
             if (dt.Rows.Count == 0) { throw new InvalidCredentialsException("Tài khoản hoặc mật khẩu không đúng"); }
-            if (dt.Rows[0]["password"].ToString() != account.password) { throw new InvalidCredentialsException("Tài khoản hoặc mật khẩu không đúng"); }
+            bool verified = BCrypt.Net.BCrypt.Verify(account.password, dt?.Rows[0]["password"]?.ToString()?.Trim());
+            if (!verified) { throw new InvalidCredentialsException("Tài khoản hoặc mật khẩu không đúng"); }
+            account = Convert<Account>.DataRowToModel(dt.Rows[0]);
             string nameCookie = "accessToken";
             string value = ActionJWT.createJWT(account);
             ActionCookie.AddCookie(context, nameCookie, value);
@@ -59,13 +61,16 @@ namespace Bussiness
         {
             ActionCookie.DeleteCookie(res, "accessToken");
         }
-        public async Task Regist(Account account)
+        public async Task Regist(Account account, HttpContext context)
         {
             DataTable dt = await ICrud.FindOne(account);
             if (dt.Rows.Count > 0)
             {
                 throw new DuplicateDataException("Account đã tồn tại");
             }
+            string idCustomer = string.IsNullOrEmpty(context.Request.Cookies["newCustomer"]) ? StringUtility.GenerateRandomString(64) : context.Request.Cookies["newCustomer"];
+            account.customer = new Customer(idCustomer);
+            await Bussiness<Customer>.Save(account.customer);
             ValidateKeyModel(account);
             account.password = BCrypt.Net.BCrypt.HashPassword(account.password);
             await ICrud.Save(account);
