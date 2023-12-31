@@ -47,16 +47,6 @@ namespace DataAccess
             string query = $"EXEC UpsertBill @id = {bill.id} , @date = '{bill.date.ToString("yyyy-MM-dd HH:mm:ss")}' , @status = N'{bill.status}',@discount = {bill.discount},@customer_id = '{(bill.customer?.id)}'";
             await DataProvider.Instance.ExecuteNonQueryAsync(query);
         }
-        public void Purchase(BillingDetail detail, string khachhang)
-        {
-            string query = $@"EXEC Purchase
-            @name = N'{detail.product.name}',
-            @color = N'{detail.product.color}',
-            @size = '{detail.product.size}',
-            @quantity= {detail.quantity},
-            @customer = '{khachhang}'";
-            _ = DataProvider.Instance.ExecuteNonQueryAsync(query);
-        }
 
         public Task<DataTable> GetBillingDetails(int idbill)
         {

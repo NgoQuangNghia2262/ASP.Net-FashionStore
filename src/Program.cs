@@ -9,7 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddTransient<IProduct_BUS, Product_BUS>();
+builder.Services.AddTransient<IAccount_BUS, Account_BUS>();
+builder.Services.AddTransient<ICustomer_BUS, Customer_BUS>();
+builder.Services.AddTransient<IBill_BUS, Bill_BUS>();
+
+
 builder.Services.AddCors();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -52,14 +58,3 @@ app.UseCors(options =>
 app.MapControllers();
 
 app.Run();
-//namespace src
-//{
-//    public class Program
-//    {
-//        public static void Main(string[] args)
-//        {
-//            string passwordHash = BCrypt.Net.BCrypt.HashPassword("Pa$$w0rd");
-//            Console.WriteLine(passwordHash);
-//        }
-//    }
-//}

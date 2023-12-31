@@ -16,7 +16,25 @@ namespace src.Controllers
         {
             this.bus = bus;
         }
-
+        [HttpGet]
+        [Route("FindProductByName")]
+        public async Task<ActionResult<ResponseResult<Product[]>>> FindProductByName(string name)
+        {
+            ResponseResult<Product[]> res = new ResponseResult<Product[]>();
+            try
+            {
+                Product[] products = await bus.FindProductByName(name);
+                res.StatusCode = 200;
+                res.Data = products;
+            }
+            catch (Exception ex)
+            {
+                res.StatusCode = 500;
+                res.Message = ex.Message;
+                return BadRequest(res);
+            }
+            return Ok(res);
+        }
         [HttpGet]
         [Route("FindImgNamePriceProducts")]
         public async Task<ActionResult<ResponseResult<Product[]>>> FindImgNamePriceProducts(int PageSize, int PageNumber)

@@ -2,11 +2,7 @@
 using Model;
 using Model.Interface;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccess
 {
@@ -44,6 +40,13 @@ namespace DataAccess
 
             return DataProvider.Instance.ExecuteQueryAsync(query);
         }
+
+        public Task<DataTable> FindProductByName(string name)
+        {
+            string query = $"select * from Product where name = N'{name}'";
+            return DataProvider.Instance.ExecuteQueryAsync(query);
+        }
+
         public async Task Save(dynamic obj)
         {
             Product? product = obj as Product;

@@ -25,15 +25,6 @@ namespace DataAccess
             return DataProvider.Instance.ExecuteQueryAsync($"select * from Account where Username = '{account?.username}'");
         }
 
-        public Task<DataTable> GetCartForCustomer(string idCustomer)
-        {
-            string query = $"select BillingDetails.* , Product.* from BillingDetails " +
-            "inner join Bill on BillingDetails.idBill = Bill.id " +
-            "inner join Product on Product.name = BillingDetails.nameProduct and Product.color = BillingDetails.colorProduct and Product.size = BillingDetails.sizeProduct " +
-            $"where customer = '{idCustomer}' and status = N'UnPaid'";
-            return DataProvider.Instance.ExecuteQueryAsync(query);
-        }
-
         public async Task Save(dynamic obj)
         {
             Account? account = obj as Account;

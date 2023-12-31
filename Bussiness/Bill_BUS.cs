@@ -23,13 +23,6 @@ namespace Bussiness
             BillingDetail[] list = Helper.Convert<BillingDetail>.DatatableToModel(dt);
             return list;
         }
-
-        public void Purchase(BillingDetail detail, string khachhang)
-        {
-            IBill_DAL dal = new Bill_DAL();
-            dal.Purchase(detail, khachhang);
-        }
-
         public bool ValidateKeyModel(IKey obj)
         {
             return true;

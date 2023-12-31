@@ -1,5 +1,7 @@
 ﻿using System.Data;
 using Bussiness.Exceptions;
+using Bussiness.Helper;
+using Bussiness.Interface;
 using DataAccess;
 using DataAccess.Interface;
 using Model;
@@ -7,7 +9,7 @@ using Model.Interface;
 
 namespace Bussiness
 {
-    public class Product_BUS : Interface.IValidate, Interface.IProduct_BUS
+    public class Product_BUS : IValidate, IProduct_BUS
     {
         private IProduct_DAL dal;
         private ICRUD ICrud;
@@ -54,7 +56,7 @@ namespace Bussiness
             DataTable result = new DataTable();
             result = await dal.FindByWord(PageSize, PageNumber);
             if (result.Rows.Count == 0) { throw new DataNotFoundException("No results found."); }
-            res.Data = Helper.Convert<Product>.DatatableToModel(result);
+            res.Data = Convert<Product>.DatatableToModel(result);
             res.TotalRows = int.Parse(result.Rows[0]["TotalRows"]?.ToString() ?? "");
             return res;
         }
@@ -70,9 +72,17 @@ namespace Bussiness
             result = await dal.FindImgNamePriceProducts(PageSize, PageNumber);
             if (result.Rows.Count == 0) { throw new DataNotFoundException("No results found."); }
             int TotalRows = int.Parse(result.Rows[0]["TotalRows"]?.ToString() ?? "");
-            res.Data = Helper.Convert<Product>.DatatableToModel(result);
+            res.Data = Convert<Product>.DatatableToModel(result);
             res.TotalRows = TotalRows;
             return res;
+        }
+
+        public async Task<Product[]> FindProductByName(string name)
+        {
+            DataTable result = new DataTable();
+            result = await dal.FindProductByName(name);
+            if (result.Rows.Count == 0) { throw new DataNotFoundException("No results found."); }
+            return Convert<Product>.DatatableToModel(result);
         }
     }
 }

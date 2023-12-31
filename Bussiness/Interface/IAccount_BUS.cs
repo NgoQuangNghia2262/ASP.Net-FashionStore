@@ -7,7 +7,7 @@ namespace Bussiness.Interface
 	{
 		void ChangePassword(Account account, string? newPass);
 		Task Regist(Model.Account account, HttpContext context);
-		Task<BillingDetail[]> GetCartForCustomer(string idCustomer);
 		Account GetLoggedInUser(HttpContext context);
+
 	}
 }

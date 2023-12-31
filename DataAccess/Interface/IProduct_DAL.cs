@@ -6,6 +6,7 @@ namespace DataAccess.Interface
     {
         Task<DataTable> FindByWord(int PageSize, int PageNumber);
         Task<DataTable> FindImgNamePriceProducts(int PageSize, int PageNumber);
+        Task<DataTable> FindProductByName(string name);
 
     }
 }

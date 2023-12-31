@@ -12,7 +12,11 @@ namespace src.Controllers
     [ApiController]
     public class BillController : ControllerBase, ICRUD<Bill>
     {
-        private readonly IBill_BUS bus = new Bill_BUS();
+        private readonly IBill_BUS bus;
+        public BillController(IBill_BUS bus)
+        {
+            this.bus = bus;
+        }
         [HttpPost]
         [Route("create")]
         public async Task<ActionResult<ResponseResult>> Create(Bill obj)
@@ -103,54 +107,7 @@ namespace src.Controllers
             }
             return Ok(result);
         }
-        [HttpPost]
-        [Route("purchase")]
-        public async Task<ActionResult<ResponseResult>> Purchase(BillingDetail billing)
-        {
-            ResponseResult result = new ResponseResult();
-            string idCustomer = "";
-            try
-            {
-                //Đã đăng nhập
-                string token = ActionCookie.GetCookieName(HttpContext, "accessToken");
-                Account account = ActionJWT.VerifyJwtToken(token);
-                ICustomer_BUS customer_bus = new Customer_BUS();
-                ResponseResult<Customer> res = await Bussiness<Customer>.FindOne(account.customer);
-                idCustomer = res.Data.id;
-            }
-            catch (NotAuthenticated)
-            {
-                if (string.IsNullOrEmpty(HttpContext.Request.Cookies["newCustomer"]))
-                {
-                    //Chưa đăng nhập và chưa mua sản phẩm nào
-                    string randomString = StringUtility.GenerateRandomString(64);
-                    ActionCookie.AddCookie(HttpContext, "newCustomer", randomString);
-                    idCustomer = randomString;
-                    await Bussiness<Customer>.Save(new Customer(randomString));
-                }
-                else
-                {
-                    //Chưa đăng nhập và đã mua vài sản phẩm
-                    idCustomer = HttpContext.Request.Cookies["newCustomer"];
-                }
 
-            }
-            catch (Exception ex)
-            {
-                result.StatusCode = 500;
-                result.Message = ex.Message;
-                return BadRequest(result);
-            }
-            try { bus.Purchase(billing, idCustomer); }
-            catch (Exception ex)
-            {
-                result.StatusCode = 500;
-                result.Message = ex.Message;
-                return BadRequest(result);
-            }
-            result.StatusCode = 200;
-            return Ok(result);
-        }
         [HttpGet]
         [Route("GetBillingDetails")]
         public async Task<ActionResult<ResponseResult<BillingDetail[]>>> GetBillingDetails(int idbill)

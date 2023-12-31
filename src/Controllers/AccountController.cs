@@ -19,7 +19,11 @@ namespace src.Controllers
     [ApiController]
     public class AccountController : ControllerBase, ICRUD<Account>
     {
-        private readonly IAccount_BUS bus = new Account_BUS();
+        private IAccount_BUS bus;
+        public AccountController(IAccount_BUS bus)
+        {
+            this.bus = bus;
+        }
         [HttpGet]
         [Route("test")]
         public ActionResult Test()
@@ -236,48 +240,6 @@ namespace src.Controllers
             }
             return Ok(result);
         }
-
-        [HttpGet]
-        [Route("getCartForCustomer")]
-        public async Task<ActionResult<ResponseResult<BillingDetail[]>>> GetCartForCustomer()
-        {
-            ResponseResult<BillingDetail[]> result = new ResponseResult<BillingDetail[]>();
-            string idCustomer;
-            try
-            {
-                //Đã đăng nhập
-                string token = ActionCookie.GetCookieName(HttpContext, "accessToken");
-                Account account = ActionJWT.VerifyJwtToken(token);
-                idCustomer = account.customer == null ? "" : account.customer.id;
-
-            }
-            catch (NotAuthenticated)
-            {
-                if (string.IsNullOrEmpty(HttpContext.Request.Cookies["newCustomer"]))
-                {
-                    result.StatusCode = 404;
-                    result.Message = "Chưa có sản phẩm nào";
-                    return BadRequest(result);
-                }
-                else
-                {
-                    //Chưa đăng nhập và đã mua vài sản phẩm
-                    idCustomer = HttpContext.Request.Cookies["newCustomer"] ?? "";
-                }
-
-            }
-            catch (Exception ex)
-            {
-                result.StatusCode = 500;
-                result.Message = ex.Message;
-                return BadRequest(result);
-            }
-
-            BillingDetail[] billingDetails = await bus.GetCartForCustomer(idCustomer);
-            result.Data = billingDetails;
-            result.StatusCode = 200;
-            return Ok(result);
-        }
         [HttpGet]
         [Route("auth")]
         public ActionResult<ResponseResult> Auth()
@@ -324,6 +286,13 @@ namespace src.Controllers
                 Account account = bus.GetLoggedInUser(HttpContext);
                 result.StatusCode = 200;
                 result.Data = account;
+            }
+            catch (NotAuthenticated ex)
+            {
+                result.StatusCode = 16;
+                result.Message = ex.Message;
+                return BadRequest(result);
+
             }
             catch (Exception ex)
             {

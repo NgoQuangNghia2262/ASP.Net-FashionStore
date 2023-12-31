@@ -89,25 +89,13 @@ namespace Bussiness
             account.password = passwordHash;
             await ICrud.Save(account);
         }
-
-        public async Task<BillingDetail[]> GetCartForCustomer(string idCustomer)
-        {
-            DataTable dt = await account_DAL.GetCartForCustomer(idCustomer);
-            BillingDetail[] list = new BillingDetail[dt.Rows.Count];
-            for (int i = 0; i < dt.Rows.Count; i++)
-            {
-                BillingDetail billing = new BillingDetail(dt.Rows[i]);
-                billing.product = new Product(dt.Rows[i]);
-                list[i] = billing;
-            }
-            return list;
-        }
-
         public Account GetLoggedInUser(HttpContext context)
         {
             string token = ActionCookie.GetCookieName(context, "accessToken");
             Account account = ActionJWT.VerifyJwtToken(token);
             return account;
         }
+
+
     }
 }
